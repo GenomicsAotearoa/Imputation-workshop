@@ -2,9 +2,10 @@
 
 The imputation workshop aims to get you started with your own analysis......
 
+This workshop will be held in an all-virtual format via Zoom. We are limiting the workshop to 20 registrants on a first-come-first-serve basis, so register ASAP.
+Register here.
 
-
-The schedule will be as follows:
+The schedule for the 28th of September will be as follows:
 
 ## Morning: Theory (9:00am-12:00pm)
 Topic 1 (9:00-9:45): General Background/Introduction to Imputation – Michael Lee
