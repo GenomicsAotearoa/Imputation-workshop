@@ -2,10 +2,12 @@
 
 The imputation workshop aims to get you started with your own analysis......
 
-This workshop will be held in an all-virtual format via Zoom. We are limiting the workshop to 20 registrants on a first-come-first-serve basis, so <a href="https://www.eventbrite.co.nz/e/imputation-workshop-tickets-119969852057">Register here.</a> ASAP.
+This workshop will be held in an all-virtual format via Zoom. We are limiting the workshop to 20 registrants on a first-come-first-serve basis, so <a href="https://www.eventbrite.co.nz/e/imputation-workshop-tickets-119969852057">Register here</a> ASAP.
 
 
 The schedule for the 28th of September will be as follows:
+
+---
 
 ## Morning: Theory (9:00am-12:00pm)
 Topic 1 (9:00-9:45): General Background/Introduction to Imputation – Michael Lee
@@ -31,6 +33,8 @@ Practical 2: Importance of quality control – Yu Wang
 
 Final Discussion (4:30-5:00)
 
-* Please make sure you go through the Background folder to prepare yourself for the practical side of the workshop.*
+---
+
+Please make sure you go through the <a href="https://github.com/GenomicsAotearoa/Imputation-workshop/tree/master/0.Background">Background</a> folder to prepare yourself for the practical side of the workshop.
 
 If you have any questions or comments, please don’t hesitate to get in touch.
