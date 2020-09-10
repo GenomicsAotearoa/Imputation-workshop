@@ -31,4 +31,6 @@ Practical 2: Importance of quality control – Yu Wang
 
 Final Discussion (4:30-5:00)
 
-This workshop will be held in an all-virtual format via Zoom. We are limiting the workshop to 20 registrants on a first-come-first-serve basis, so register ASAP. If you have any questions or comments, please don’t hesitate to get in touch.
+*Please make sure you go through the Background folder to prepare yourself for the practical side of the workshop.
+
+If you have any questions or comments, please don’t hesitate to get in touch.
