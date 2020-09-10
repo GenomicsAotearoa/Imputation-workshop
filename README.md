@@ -3,7 +3,8 @@
 The imputation workshop aims to get you started with your own analysis......
 
 This workshop will be held in an all-virtual format via Zoom. We are limiting the workshop to 20 registrants on a first-come-first-serve basis, so register ASAP.
-Register here.
+
+<a href="https://www.eventbrite.co.nz/e/imputation-workshop-tickets-119969852057">Register here.</a>
 
 The schedule for the 28th of September will be as follows:
 
