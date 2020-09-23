@@ -1,16 +1,16 @@
 # Aim
-1. Go through the pipeline of phasing and imputing high density genotype to sequence level
+1. Go through the pipeline of phasing and imputing high-density genotype to sequence level
 2. Understand the importance of quality control 
 3. Know how to evaluate the imputation performance
 
 # Tools we need
-BCFtools: basic bioinformatics software, in this tutorial, we use it for creating subsets and quality control ([http://samtools.github.io/bcftools/bcftools.html](http://samtools.github.io/bcftools/bcftools.html))
+BCFtools: basic bioinformatics software, in this tutorial, we use it for creating subsets and quality control. the current version is 1.9-GCC-7.4.0. ([http://samtools.github.io/bcftools/bcftools.html](http://samtools.github.io/bcftools/bcftools.html))
 
-VCFtools: basic bioinformatics software, in this tutorial, we use it for compare two vcf files and evaluate the concordance rate ([https://vcftools.github.io/index.html](https://vcftools.github.io/index.html))
+VCFtools: basic bioinformatics software, in this tutorial, we use it for comparing two vcf files and evaluate the concordance rate. The current version is /0.1.15-GCC-9.2.0-Perl-5.30.1 ([https://vcftools.github.io/index.html](https://vcftools.github.io/index.html))
 
 R: basic statistics software
 
-Beagle 5.0: software for phasing and imputation ([https://faculty.washington.edu/browning/beagle/beagle.html](https://faculty.washington.edu/browning/beagle/beagle.html))
+Beagle: software for phasing and imputation. The current version is version 5.1-18May20. ([https://faculty.washington.edu/browning/beagle/beagle.html](https://faculty.washington.edu/browning/beagle/beagle.html))
 
 Minimac3: software for imputation ([https://genome.sph.umich.edu/wiki/Minimac3](https://genome.sph.umich.edu/wiki/Minimac3))
 
@@ -24,19 +24,23 @@ To find modules which are already available on NeSI, use `module spider #module_
 To load modules and start using, use `module load #module_name`
 
 ``` bash
-module load BCFtools
-module load VCFtools
-module load R
-beagle5=/nesi/nobackup/nesi02659/AUG28/Practical/practical2/beagle.12Jul19.0df_bg5.jar
-minimac3=/nesi/nobackup/nesi02659/AUG28/Practical/practical2/Minimac3
+module load BCFtools/1.9-GCC-7.4.0
+module load VCFtools/0.1.15-GCC-9.2.0-Perl-5.30.1
+module load R/4.0.1-gimkl-2020a
+module load Beagle/5.1-18May20.d20 
+#minimac3=/nesi/nobackup/nesi02659/SEP28/practical2/Minimac3
 ```
 
 ## 2. Copy the files into the home directory
 Define two directories: workshop directory and home directory. In this workshop, the analysis will be conducted in the home directory
 
 ```
-maindir=/nesi/nobackup/nesi02659/AUG28/Practical/practical2
-home=/home/ywang17
+maindir=/nesi/nobackup/nesi02659/SEP28/practical2
+cd $Home
+```
+```
+mkdir -p imputation_workshop
+cd $Home/imputation-workshop
 ```
 
 The main input file (seqvcf) is extracted (from 30MB to 35MB) on chr13 from 1000 human genome data. I selected some of the reliable SNPs to generate a HD genotype dataset(hdvcf). 
@@ -49,12 +53,10 @@ hdvcf=$maindir/hd_5MB.vcf.gz
 Now what you need to do is to cp both genotype and sequence data to your own home directory. In addition, we have to software that we need to use which are not available on NeSI. Please also copy these two files in your own working directory.
 
 ```
-cp $seqvcf $home
-cp $hdvcf $home
-cp $beagle5 $home
-cp $minimac3 $home
-beagle5=/home/ywang17/beagle.12Jul19.0df_bg5.jar
-minimac3=/home/ywang17/Minimac3
+cp $seqvcf $Home/imputation-workshop
+cp $hdvcf $Home/imputation-workshop
+cp $beagle5 $Home/imputation-workshop
+cp $minimac3 $Home/imputation-workshop
 ```
 
 The genotype and sequence files use "vcf.gz" format. We can not open it directly. To check how the genotype looks like, you need to use: zless -S. -S is to make the file well formated. 
@@ -145,12 +147,12 @@ For imputation, no matter which software are you using, phasing is compulsory fo
 The data I downloaded already finished phasing that you can see in the dataset, all the genotypes are phased (eg: "0|1", not "0/1"). Besides phasing needs a lot of computation resources and a certain amount of time. Here since the data is already phased, it won't take too long.  
 
 ```
-java -jar $beagle5 gt=ref_filtered.vcf.gz chrom=13 out=ref_filtered_phased
+beagle gt=ref_filtered.vcf.gz chrom=13 out=ref_filtered_phased
 tabix -f ref_filtered_phased.vcf.gz
 ```
 
 ```
-java -jar $beagle5 gt=ref_nonfiltered.vcf.gz chrom=13 out=ref_nonfiltered_phased
+beagle gt=ref_nonfiltered.vcf.gz chrom=13 out=ref_nonfiltered_phased
 tabix -f ref_nonfiltered_phased.vcf.gz
 ```
 
@@ -161,12 +163,12 @@ In this tutorial, I will show you the imputation using two software: Beagle 5 an
 Beagle has been evolved from version 3.0 to the current 5.1 version. It becomes much faster and simpler. And be able to handle large datasets. In th e meantime, the parameters for running the software have been reduced a lot. There are several important parameters that can influence imputation performance such as effective population size (Ne), window size, etc. Check the following paper: Improving Imputation Quality in BEAGLE for Crop and Livestock Data [https://www.g3journal.org/content/10/1/177](https://www.g3journal.org/content/10/1/177)
 
 ```
-java -jar $beagle5 gt=study_hd.vcf.gz ref=ref_filtered_phased.vcf.gz chrom=13 impute=true gp=true out=HD_to_seq_filtered_beagle5
+beagle gt=study_hd.vcf.gz ref=ref_filtered_phased.vcf.gz chrom=13 impute=true gp=true out=HD_to_seq_filtered_beagle5
 tabix -f HD_to_seq_filtered_beagle5.vcf.gz
 ```
 
 ```
-java -jar $beagle5 gt=study_hd.vcf.gz ref=ref_nonfiltered_phased.vcf.gz chrom=13 impute=true gp=true out=HD_to_seq_nonfiltered_beagle5
+beagle gt=study_hd.vcf.gz ref=ref_nonfiltered_phased.vcf.gz chrom=13 impute=true gp=true out=HD_to_seq_nonfiltered_beagle5
 tabix -f HD_to_seq_nonfiltered_beagle5.vcf.gz
 ```
 
@@ -182,8 +184,8 @@ The imputation process for using minimac3 is rather similar. It is more efficien
 ```
 
 ```
-cp $maindir/HD_to_seq_filtered_minimac3.* $home/imputation
-cp $maindir/HD_to_seq_nonfiltered_minimac3.* $home/imputation
+cp $maindir/HD_to_seq_filtered_minimac3.* $Home/imputation-workshop/imputation
+cp $maindir/HD_to_seq_nonfiltered_minimac3.* $Home/imputation-workshop/imputation
 ```
 
 ## 9. Calculate the genotype concordance using vcf-compare (from VCFtools)
