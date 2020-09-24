@@ -4,7 +4,10 @@
 3. Know how to evaluate the imputation performance
 
 # Tools we need
-BCFtools: basic bioinformatics software, in this tutorial, we use it for creating subsets and quality control. the current version is 1.9-GCC-7.4.0. ([http://samtools.github.io/bcftools/bcftools.html](http://samtools.github.io/bcftools/bcftools.html))
+
+>All of these tools/applications are pre-installed in the training platform 
+
+BCFtools: basic bioinformatics software, in this tutorial, we use it for creating subsets and quality control. the current version is 1.10.2-GCC-9.2.0 ([http://samtools.github.io/bcftools/bcftools.html](http://samtools.github.io/bcftools/bcftools.html))
 
 VCFtools: basic bioinformatics software, in this tutorial, we use it for comparing two vcf files and evaluate the concordance rate. The current version is /0.1.15-GCC-9.2.0-Perl-5.30.1 ([https://vcftools.github.io/index.html](https://vcftools.github.io/index.html))
 
@@ -24,7 +27,7 @@ To find modules which are already available on NeSI, use `module spider #module_
 To load modules and start using, use `module load #module_name`
 
 ``` bash
-module load BCFtools/1.9-GCC-7.4.0
+module load BCFtools/1.10.2-GCC-9.2.0
 module load VCFtools/0.1.15-GCC-9.2.0-Perl-5.30.1
 module load R/4.0.1-gimkl-2020a
 module load Beagle/5.1-18May20.d20 
@@ -36,11 +39,11 @@ Define two directories: workshop directory and home directory. In this workshop,
 
 ```
 maindir=/nesi/nobackup/nesi02659/SEP28/practical2
-cd $Home
+cd $HOME
 ```
 ```
 mkdir -p imputation_workshop
-cd $Home/imputation-workshop
+cd $HOME/imputation-workshop
 ```
 
 The main input file (seqvcf) is extracted (from 30MB to 35MB) on chr13 from 1000 human genome data. I selected some of the reliable SNPs to generate a HD genotype dataset(hdvcf). 
@@ -53,10 +56,10 @@ hdvcf=$maindir/hd_5MB.vcf.gz
 Now what you need to do is to cp both genotype and sequence data to your own home directory. In addition, we have to software that we need to use which are not available on NeSI. Please also copy these two files in your own working directory.
 
 ```
-cp $seqvcf $Home/imputation-workshop
-cp $hdvcf $Home/imputation-workshop
-cp $beagle5 $Home/imputation-workshop
-cp $minimac3 $Home/imputation-workshop
+cp $seqvcf $HOME/imputation-workshop
+cp $hdvcf $HOME/imputation-workshop
+cp $beagle5 $HOME/imputation-workshop
+cp $minimac3 $HOME/imputation-workshop
 ```
 
 The genotype and sequence files use "vcf.gz" format. We can not open it directly. To check how the genotype looks like, you need to use: zless -S. -S is to make the file well formated. 
@@ -125,18 +128,18 @@ cd imputation
 bcftools is very handy of extracting the sample from the whole dataset via using -S. We will generate two files for our study samples: one from HD genotype as my study population. And another one from filtered sequence data for future validation. After extraction, we use function tabix to index both files.
 
 ```
-bcftools view -O z -o study_hd.vcf.gz -S $home/study.ID $home/hd_5MB.vcf.gz
+bcftools view -O z -o study_hd.vcf.gz -S $HOME/study.ID $HOME/hd_5MB.vcf.gz
 tabix -f study_hd.vcf.gz
-bcftools view -O z -o study_filtered.vcf.gz -S $home/study.ID $home/nosingleton_2alleles.vcf.gz #for validation
+bcftools view -O z -o study_filtered.vcf.gz -S $HOME/study.ID $HOME/nosingleton_2alleles.vcf.gz #for validation
 tabix -f study_filtered.vcf.gz
 ```
 
 Similarly, we will extract the samples for our reference samples. The same functions will be used here. We will generate two files for the reference samples, one is from the original unfiltered sequence, and another one from the filtered sequence. Again, we will use tabix to index these two files. 
 
 ```
-bcftools view -O z -o ref_nonfiltered.vcf.gz -S $home/ref.ID $home/nonfilter_seq_5MB.vcf.gz
+bcftools view -O z -o ref_nonfiltered.vcf.gz -S $HOME/ref.ID $HOME/nonfilter_seq_5MB.vcf.gz
 tabix -f ref_nonfiltered.vcf.gz
-bcftools view -O z -o ref_filtered.vcf.gz -S $home/ref.ID $home/nosingleton_2alleles.vcf.gz
+bcftools view -O z -o ref_filtered.vcf.gz -S $HOME/ref.ID $HOME/nosingleton_2alleles.vcf.gz
 tabix -f ref_filtered.vcf.gz
 ```
 
@@ -184,8 +187,8 @@ The imputation process for using minimac3 is rather similar. It is more efficien
 ```
 
 ```
-cp $maindir/HD_to_seq_filtered_minimac3.* $Home/imputation-workshop/imputation
-cp $maindir/HD_to_seq_nonfiltered_minimac3.* $Home/imputation-workshop/imputation
+cp $maindir/HD_to_seq_filtered_minimac3.* $HOME/imputation-workshop/imputation
+cp $maindir/HD_to_seq_nonfiltered_minimac3.* $HOME/imputation-workshop/imputation
 ```
 
 ## 9. Calculate the genotype concordance using vcf-compare (from VCFtools)
