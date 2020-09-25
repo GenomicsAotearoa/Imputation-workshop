@@ -1,10 +1,11 @@
-OVERVIEW: In imputation studies, there are two datasets involved: a reference and a target. The reference dataset is a set of individuals that have genotype data at the desired density, while the target data includes individuals that you wish to infer the higher density genotypes. A crucial aspect to any imputation study is identifying the appropriate reference set of individuals to represent the target individuals. However, scenario where only a limited subset of individuals can be genotyped (e.g. due to cost) at the desired density, choosing the right individuals to serve as a reference set become critically important.
+# OVERVIEW
+In imputation studies, there are two datasets involved: a reference and a target. The reference dataset is a set of individuals that have genotype data at the desired density, while the target data includes individuals that you wish to infer the higher density genotypes. A crucial aspect to any imputation study is identifying the appropriate reference set of individuals to represent the target individuals. However, scenario where only a limited subset of individuals can be genotyped (e.g. due to cost) at the desired density, choosing the right individuals to serve as a reference set become critically important.
 
-AIMS:
+# AIMS
 1)	Give an overview of a haplotype-based method to prioritize selection of reference animals.
 2)	Assess the impact that using different individuals in a reference set has on imputation accuracy.
 
-TOOLS:
+## TOOLS:
 BCFtools: basic bioinformatics software, in this tutorial, we use it for creating subsets and quality control (http://samtools.github.io/bcftools/bcftools.html)
 
 R: Packages data.table and reshape2 – offer quicker manipulations of large data frames
@@ -17,6 +18,8 @@ Julia: Package LPChoose – Code to select individuals based on haplotypes
 Plinkv1.9: Offers many genetics tools. Simply used to convert vcf to 0/1/2 genotypes here
 (https://www.cog-genomics.org/plink2)
 
+```
+
 cd /nesi/nobackup/nesi02659/SEP28
 
 module load BCFtools
@@ -25,8 +28,9 @@ module load R
 module load Beagle/5.0-12Jul19.0df
 module load Julia
 
+```
 
-FILES:
+### FILES:
 HD_50K_Overlap_SNPs_26_All_Ans.vcf.gz
 
 STEP 1: Phase all individuals using a common set of genotypes to obtain haplotypes
@@ -41,6 +45,8 @@ STEP 2: Convert haplotypes into haploblocks
 Background: We can then convert this into haplotypes of a defined size (called a haploblock). Here, we’ll use a haploblock size of 500kb. Note: This is code for a single chromosome – this would be done for all chromosomes and combined into a single file.
 
 Action: This will be achieved in R:
+
+```
 R
 require(data.table)
 c=26
@@ -87,6 +93,8 @@ fwrite(pbf,paste("HD_50K_Overlap_SNPs_",c,"_All_Ans.hap500",sep=""),col.names=F,
 q()
 n
 
+```
+
 Background: The above R code provides us with rows=number of animals and columns=2*number of haploblocks plus 1. The first column in this matrix is the individual ID, and the elements of the rest of this matrix are the haploblock alleles each diploid individual possesses. As mentioned earlier, the dataset includes all individuals (WGS, HD, and 50k). For the purposes of this exercise, we will only consider individuals that have HD or WGS genotypes when considering additional animals to include in the reference set. To do this, we can use a weights file to indicate whether LPChoose should consider the individual as a candidate. Additionally, we have selected a random set of 96 individuals for comparison of the performance of LPChoose:
 "LPChoose_weights.txt
 "Random96.txt" 
@@ -95,6 +103,7 @@ STEP 3: Run LPChoose
 Background: Using these weights, we can run LPChoose to identify a set of individuals to select in addition to those we already have for an improved reference set. We can also get a feel for haplotype diversity in the set by looking at the number of iterations to capture all haplotypes.
 Action: This will be done in Julia. Note: each time LPChoose is run, it generates 3 files (identified_animals.txt, haplotype_coverage.txt, genome_coverage.txt). The file names will need to be changed before next run of LPChoose to prevent them from being overwritten. Also, the example uses a single chromosome to save time. The next step uses outputs for the whole genome.
 
+```
 julia
 ##LPChoose code with functions to run algorithm
 include("LPChoose_weights.jl")
@@ -118,12 +127,16 @@ LPChoose("HD_50K_Overlap_SNPs_26_All_Ans.hap500",96,0.0,nsteps=96,preselected_an
 
 ##Assess performance of randomly selected 96 individuals##
 LPChoose("HD_50K_Overlap_SNPs_26_All_Ans.hap500",0,0.0,nsteps=1,preselected_animals=animals_selected_ran)
+
+```
+
 STEP 4: Assess haplotype diversity
 
 Background: We can see how many iterations are required to capture all haplotypes, how representative of our target population our reference is, etc. We’ll use the outputs for all haplotypes.
 
 Action: This can be in R:
 
+```
 ##All individuals  – no pre-selection##
 x1=read.csv("identified_animals_hap500_all.txt",header=T)
 x2=read.csv("haplotype_coverage_hap500_all.txt",header=T)
@@ -196,6 +209,8 @@ abline(h=r[nrow(r),"PropGen"],lty=2,col="red",lwd=2)
 abline(h=r[nrow(r),"PropHap"],col="red",lwd=2)
 dev.off()
 
+```
+
 STEP 5: Look at population structure
 
 Background: We can also have a look at the population structure through a PCA, and see where on the individuals selected are in the PCA. Note: I have already generated the PCs, but example code is provided for how to do this.
@@ -222,7 +237,8 @@ Background: We can also have a look at the population structure through a PCA, a
 ##
 
 Action: This can be in R:
-R
+
+``` {R}
 require(data.table)
 
 ##Read in Principal Components##
@@ -268,6 +284,8 @@ dev.off()
 q()
 n
 
+```
+
 STEP 6: Assess the impact of using different reference sets for imputation
 
 Background: Here, we’ll test the impact of using different reference sets for imputation of individuals with 50k genotypes to HD genotypes. We have created a series of files containing different sets of reference individuals:
@@ -281,6 +299,7 @@ NZ_WGS_IDs.txt
 NZ_AUS_WGS_IDs.txt
 AUS_WGS_IDs.txt
 
+```
 These files can be used to subset our HD genotype file HD_SNPs_26_All_Ans.vcf.gz, e.g. in bcftools:
 bcftools view -Oz -S UNREL_WGS_IDs.txt HD_SNPs_26_All_Ans.vcf.gz > HD_SNPs_26_Unrelated_WGS_Ans.vcf.gz
 
@@ -325,8 +344,11 @@ bcftools view -Oz -T HD_50K_Overlap_Masked_SNPs.pos HD_50K_Overlap_SNPs_26_Targe
 bcftools index HD_50K_Overlap_SNPs_26_Target_Ans_Imputed_with_NZ_WGS_Ans.vcf.gz
 bcftools view -Oz -T HD_50K_Overlap_Masked_SNPs.pos HD_50K_Overlap_SNPs_26_Target_Ans_Imputed_with_NZ_WGS_Ans.vcf.gz > HD_50K_Overlap_SNPs_26_Target_Ans_Imputed_with_NZ_WGS_Ans_masked_SNPs.vcf.gz
 
+```
+
 ##ASSESS IMPUTATION ACCURACY FOR THE DIFFERENT SETS - CHANGE "imputed_file"###
-R
+
+```{R}
 require(data.table)
 library(reshape2)
 
@@ -444,3 +466,5 @@ summary(dancorb)
 
 ##Compare reference sets##
 t.test(dancora, dancorb, paired = TRUE, alternative = "two.sided")
+
+```
