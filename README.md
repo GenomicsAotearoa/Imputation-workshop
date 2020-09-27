@@ -35,6 +35,6 @@ Final Discussion (4:30-5:00)
 
 ---
 
-Please make sure you go through the <a href="https://github.com/GenomicsAotearoa/Imputation-workshop/tree/master/0.Background">Background</a> folder to prepare yourself for the practical side of the workshop.
+Please use the <a href="https://pad.riseup.net/p/28_09_2020-Imputation-Workshop>Collaborative Document</a> for group communication.
 
 If you have any questions or comments, please don’t hesitate to get in touch.
