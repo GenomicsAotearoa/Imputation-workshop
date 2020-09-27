@@ -41,9 +41,9 @@ maindir = "/nesi/nobackup/nesi02659/SEP28/practical1/"
 
 Read in the info file and take a look at it
 ```
-infoFile = paste(maindir,"infoFile.csv",sep="")
+infoFile = read.csv(paste(maindir,"infoFile.csv",sep=""),header=T)
 head(infoFile)
- '/nesi/nobackup/nesi02659/SEP28/practical2/infoFile.csv'
+ 
 ```
 
 A PCA plot can give us an idea of how closely related the reference and target animals are. I have already generated the PCs using the full genome (rather than the single chromosome used in this example) and this was done using the "eigen" command run on the genomic relationship matrix. This code will be made available on the github site if you are interested in working through it independently.
@@ -51,7 +51,10 @@ A PCA plot can give us an idea of how closely related the reference and target a
 The "PlotColour" column has been set for different colours based on breed, with WGS animals a different colour, based on either "NZ" or "Other" as the country that provided the WGS.
 ```
 par(bg = "gray") # set a gray background so you can see the colours more clearly
-plot(infoFile$PC1,infoFile$PC2,pch=19,col=infoFile$PlotColour)
+plot(infoFile$PC1,infoFile$PC2,pch=19,col=as.character(infoFile$PlotColour),xlab="PC1",ylab="PC2")
+points(infoFile$PC1[infoFile$LPChoose],infoFile$PC2[infoFile$LPChoose],pch=19,col=as.character(infoFile$PlotColour[infoFile$LPChoose]),cex=2)
+points(infoFile$PC1[infoFile$Random],infoFile$PC2[infoFile$Random],pch=19,col=as.character(infoFile$PlotColour[infoFile$Random]),cex=2)
+legend("topright",c("NZ_WGS","Other_WGS","LPChoose","Random"),pch=19,col=c("cyan","blue","green","red"))
 ```
 
 Now that you have the PCA plot you can look at the relationships between those animals that have WGS and will be used as the reference set of animals, and the target population.
@@ -65,14 +68,14 @@ Some other things you can try by changing the "PlotColour" column in the above c
 Here, we’ll test the impact of using different reference sets for imputation of individuals with 50k genotypes to HD genotypes. We have run BEAGLE 5.1 a number of times using a variety of reference populations and provided the output files for you to evaluate imputation accuracy. These files contain the imputed genotypes for the target animals (i.e. animals with 50k genotypes) for a set of SNPs that have been masked to test imputation accuracy.
 
 Reference Population:
-- All WGS animals: ImputedData_ALL_WGS.vcf.gz
-- NZ WGS animals: ImputedData_NZ_WGS.vcf.gz
-- NZ + AUS WGS animals: ImputedData_NZ_AUS_WGS.vcf.gz
-- AUS WGS animals: ImputedData_AUS_WGS.vcf.gz
-- Other WGS animals: ImputedData_Other_WGS.vcf.gz
-- Other + AUS animals: ImputedData_Other_AUS_WGS.vcf.gz
-- LPChoose + WGS animals: ImputedData_LPChoose_WGS.vcf.gz
-- Random + WGS animals: ImputedData_Random_WGS.vcf.gz
+- All WGS animals: ImputedData_ALL_WGS.vcf
+- NZ WGS animals: ImputedData_NZ_WGS.vcf
+- NZ + AUS WGS animals: ImputedData_NZ_AUS_WGS.vcf
+- AUS WGS animals: ImputedData_AUS_WGS.vcf
+- Other WGS animals: ImputedData_Other_WGS.vcf
+- Other + AUS animals: ImputedData_Other_AUS_WGS.vcf
+- LPChoose + WGS animals: ImputedData_LPChoose_WGS.vcf
+- Random + WGS animals: ImputedData_Random_WGS.vcf
 
 First we will call 2 packages that will help read and format large datasets
 ```
@@ -108,6 +111,22 @@ getDosages = function(imputedVCF){
    rownames(a) = paste("C", imputedVCF$"#CHROM","_P", imputedVCF$POS,sep="")
    a
 }
+
+getAccuracy = function(test, true,by="row"){
+   test=apply(test,2,function(d){as.numeric(as.character(d))})
+   true=apply(true,2,function(d){as.numeric(as.character(d))})
+   acc = c()
+   if(by == "row"){
+      for(i in 1:nrow(test)){
+         acc = c(acc,cor(test[i,],true[i,],use="complete.obs"))
+      }
+   }else{
+      for(i in 1:ncol(test)){
+         acc = c(acc,cor(test[,i],true[,i],use="complete.obs"))
+      }
+   }
+   acc
+}
 ```
 
 Read in and format the true genotypes
@@ -122,20 +141,30 @@ rownames(true2) = paste("C",true$"#CHROM","_P",true$POS,sep="")
 Change "imputed_file1" or "imputed_file2" in the code below to compare accuracies between the different reference populations.
 
 ```
-imputed_file1="ImputedData_Other_WGS.vcf.gz"
-imputed_file2="ImputedData_NZ_WGS.vcf.gz"
+imputed_file1="ImputedData_Other_WGS.vcf"
+imputed_file2="ImputedData_NZ_WGS.vcf"
 
-imputed1=fread(paste(mkdir,imputed_file1,sep=""))
-imputed2=fread(paste(mkdir,imputed_file2,sep=""))
+imputed1=fread(paste(maindir,imputed_file1,sep=""))
+imputed2=fread(paste(maindir,imputed_file2,sep=""))
 
 genos1 = getGenotypeCalls(imputed1) 
+genos1[1:5,1:5]
 genos2 = getGenotypeCalls(imputed2) 
+genos2[1:5,1:5]
 
 dosage1 = getDosages(imputed1) 
+dosage1[1:5,1:5]
 dosage2 = getDosages(imputed2) 
+dosage2[1:5,1:5]
+```
 
+Get the Accuracy of the Imputed Genotype Calls based on concordance with true genotypes.
+- IndAcc1 = Accuracy of individuals from imputed_file1
+- SNPAcc1 = Accuracy of SNPs from imputed_file1
+- IndAcc2 = Accuracy of individuals from imputed_file2
+- SNPAcc2 = Accuracy of SNPs from imputed_file2
 
-##Concordance##
+```
 genoConc1 = genos1 == true2  
 genoConc12 = genoConc1  
 genoConc12[which(is.na(true2))] = NA
@@ -151,74 +180,67 @@ IndAcc2 = colMeans(genoConc22,na.rm=T) ## Individual Concordance
 summary(IndAcc2)
 SNPAcc2 = rowMeans(genoConc22,na.rm=T) ## SNP Concordance
 summary(SNPAcc2)
+```
 
+Get Dosage R2 estimates from BEAGLE output. These are an internal estimate of SNP accuracy. How do these compare with the true accuracy from above?
+- dr1 is the dosage R2 for imputed_file1 and can be compared to SNPAcc1
+- dr2 is the dosage R2 for imputed_file2 and can be compared to SNPAcc2
+```
+dr1=sapply(strsplit(as.character(imputed1$INFO),";"),"[",1)
+dr1=sapply(strsplit(dr1,"="),"[",2)
+dr1=as.numeric(dr1)
+summary(dr1)
 
-##Dosage R2 from Beagle##
-dra=sapply(strsplit(as.character(imputed1$INFO),";"),"[",1)
-dra=sapply(strsplit(dra,"="),"[",2)
-dra=as.numeric(dra)
-summary(dra)
+dr2=sapply(strsplit(as.character(imputed2$INFO),";"),"[",1)
+dr2=sapply(strsplit(dr2,"="),"[",2)
+dr2=as.numeric(dr2)
+summary(dr2)
+```
 
-drb=sapply(strsplit(as.character(imputed2$INFO),";"),"[",1)
-drb=sapply(strsplit(drb,"="),"[",2)
-drb=as.numeric(drb)
-summary(drb)
+Another way to calculate accuracy is to get the correlation between the true and imputed genotypes or dosages. This method is generally more similar to the R2 estimates from BEAGLE.
 
-##SNP accuracy from absolute calls##
-asncora=cor(as.numeric(a[1,]),as.numeric(true2[1,]),use="complete.obs")
-for(i in 2:nrow(a)){
-	asncora=c(asncora,cor(as.numeric(a[i,]),as.numeric(true2[i,]),use="complete.obs"))
-}
-summary(asncora)
+SNP accuracy from genotype calls
+```
+GenoSNPCor1 = getAccuracy(genos1,true2,"row")
+summary(GenoSNPCor1)
 
-asncorb=cor(as.numeric(b[1,]),as.numeric(true2[1,]),use="complete.obs")
-for(i in 2:nrow(b)){
-	asncorb=c(asncorb,cor(as.numeric(b[i,]),as.numeric(true2[i,]),use="complete.obs"))
-}
-summary(asncorb)
+GenoSNPCor2 = getAccuracy(genos2,true2,"row")
+summary(GenoSNPCor2)
+```
 
-##SNP accuracy from dosage calls##
-dsncora=cor(as.numeric(a2[1,]),as.numeric(true2[1,]),use="complete.obs")
-for(i in 2:nrow(a2)){
-	dsncora=c(dsncora,cor(as.numeric(a2[i,]),as.numeric(true2[i,]),use="complete.obs"))
-}
-summary(dsncora)
+Individual accuracy from genotype calls
+```
+GenoIndCor1 = getAccuracy(genos1,true2,"col")
+summary(GenoIndCor1)
 
-dsncorb=cor(as.numeric(b2[1,]),as.numeric(true2[1,]),use="complete.obs")
-for(i in 2:nrow(b2)){
-	dsncorb=c(dsncorb,cor(as.numeric(b2[i,]),as.numeric(true2[i,]),use="complete.obs"))
-}
-summary(dsncorb)
+GenoIndCor2 = getAccuracy(genos2,true2,"col")
+summary(GenoIndCor2)
+```
 
-##Individual accuracy from absolute calls##
-aancora=cor(as.numeric(unlist(a[,1])),as.numeric(unlist(true2[,1])),use="complete.obs")
-for(i in 2:ncol(a)){
-	aancora=c(aancora,cor(as.numeric(unlist(a[,i])),as.numeric(unlist(true2[,i])),use="complete.obs"))
-}
-summary(aancora)
+SNP accuracy from dosage calls
+```
+DosSNPCor1 = getAccuracy(dosage1,true2,"row")
+summary(DosSNPCor1)
 
-aancorb=cor(as.numeric(unlist(b[,1])),as.numeric(unlist(true2[,1])),use="complete.obs")
-for(i in 2:ncol(b)){
-	aancorb=c(aancorb,cor(as.numeric(unlist(b[,i])),as.numeric(unlist(true2[,i])),use="complete.obs"))
-}
-summary(aancorb)
+DosSNPCor2 = getAccuracy(dosage2,true2,"row")
+summary(DosSNPCor2)
+```
 
-##Individual accuracy from dosage calls##
-dancora=cor(as.numeric(unlist(a2[,1])),as.numeric(unlist(true2[,1])),use="complete.obs")
-for(i in 2:ncol(a2)){
-	dancora=c(dancora,cor(as.numeric(unlist(a2[,i])),as.numeric(unlist(true2[,i])),use="complete.obs"))
-}
-summary(dancora)
+Individual accuracy from dosage calls
+```
+DosIndCor1 = getAccuracy(dosage1,true2,"col")
+summary(DosIndCor1)
 
-dancorb=cor(as.numeric(unlist(b2[,1])),as.numeric(unlist(true2[,1])),use="complete.obs")
-for(i in 2:ncol(a2)){
-	dancorb=c(dancorb,cor(as.numeric(unlist(b2[,i])),as.numeric(unlist(true2[,i])),use="complete.obs"))
-}
-summary(dancorb)
+DosIndCor2 = getAccuracy(dosage2,true2,"col")
+summary(DosIndCor2)
+```
 
-##Compare reference sets##
-t.test(dancora, dancorb, paired = TRUE, alternative = "two.sided")
+Which reference set gave the most accurate imputation accuracies?
+- DosIndCor1 is the individual accuracy from dosage calls using imputed_file1
+- DosIndCor2 is the individual accuracy from dosage calls using imputed_file2
 
+```
+t.test(DosIndCor1, DosIndCor2, paired = TRUE, alternative = "two.sided")
 ```
 
 #### Extra Exploration of Data
