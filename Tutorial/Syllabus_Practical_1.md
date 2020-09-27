@@ -65,6 +65,7 @@ A PCA plot can give us an idea of how closely related the reference and target a
 The "PlotColour" column has been set for different colours based on breed, with WGS animals a different colour, based on either "NZ" or "Other" as the country that provided the WGS, and LPChoose or Randomly selected animals different colours.
 ```
 par(bg = "gray") # set a gray background so you can see the colours more clearly
+options(repr.plot.width=12, repr.plot.height=8)
 plot(infoFile$PC1,infoFile$PC2,pch=19,col=as.character(infoFile$PlotColour),xlab="PC1",ylab="PC2")
 points(infoFile$PC1[infoFile$LPChoose],infoFile$PC2[infoFile$LPChoose],pch=19,col=as.character(infoFile$PlotColour[infoFile$LPChoose]),cex=2)
 points(infoFile$PC1[infoFile$Random],infoFile$PC2[infoFile$Random],pch=19,col=as.character(infoFile$PlotColour[infoFile$Random]),cex=2)
