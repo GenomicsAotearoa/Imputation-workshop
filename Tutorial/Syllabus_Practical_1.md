@@ -1,7 +1,7 @@
 # OVERVIEW
 In imputation studies, there are two datasets involved: a reference and a target. The reference dataset is a set of individuals that have genotype data at the desired density, while the target data includes individuals that you wish to infer the higher density genotypes. A crucial aspect to any imputation study is identifying the appropriate reference set of individuals to represent the target individuals. However, scenario where only a limited subset of individuals can be genotyped (e.g. due to cost) at the desired density, choosing the right individuals to serve as a reference set become critically important.
 
-# AIMS:
+# AIMS
 1)	Assess the impact that using different individuals in a reference set has on imputation accuracy.
 
 # BACKGROUND
@@ -11,15 +11,15 @@ Due to time and computational limitations, this practical is focused on using da
 3) LPChoose was run to identify a set of animals that would capture additional haplotypes within the population (on top of those captured by WGS animals)
 4) A variety of reference populations were generated based on country of origin of the WGS animals, LPChoose selections and Randomly selected animals
 5) Imputation was run for Chromosome 26 in BEAGLE with the different reference sets
-- Effective population size parameter set to 500
-- 52 SNPs from the 50k set of SNPs were masked for all ~36k target animals to test imputation accuracy
+   - Effective population size parameter set to 500
+   - 52 SNPs from the 50k set of SNPs were masked for all ~36k target animals to test imputation accuracy
 6) True and imputed genotypes for the 52 SNPs and ~36k target animals were subsetted from the full dataset
 
 
-# TOOLS:
+# TOOLS
 R: Packages data.table and reshape2 – offer quicker manipulations of large data frames
 
-# INPUT FILES:
+# INPUT FILES
 - infoFile.csv: Breed information on each animal as well as Principal Components from full genome
 - TrueGenotypes.vcf: True Genotypes on each animal to compute accuracy statistics
 - ImputedData_xxx.vcf: Imputed genotypes based on reference population xxx with options
@@ -33,7 +33,7 @@ R: Packages data.table and reshape2 – offer quicker manipulations of large dat
    - Random + WGS animals: ImputedData_Random_WGS.vcf   
    
    
-# PROCEDURES:
+# PRACTICAL
 ## 1) Load modules
 For this workshop we only need to use the R module because the imputation has already been completed.
 ```
