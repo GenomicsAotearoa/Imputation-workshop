@@ -5,8 +5,16 @@ In imputation studies, there are two datasets involved: a reference and a target
 1)	Assess the impact that using different individuals in a reference set has on imputation accuracy.
 
 # BACKGROUND
-What has already been done to the data before this point.
-Including running LP Choose and refer to code you will add in.
+Due to time and computational limitations, this practical is focused on using data that has already been imputed for you. Briefly, there were x steps: 
+1) Genotypes were phased
+2) 500kb haplotypes were generated
+3) LPChoose was run to identify a set of animals that would capture additional haplotypes within the population (on top of those captured by WGS animals)
+4) A variety of reference populations were generated based on country of origin of the WGS animals, LPChoose selections and Randomly selected animals
+5) Imputation was run for Chromosome 26 in BEAGLE with the different reference sets
+- Effective population size parameter set to 500
+- 52 SNPs from the 50k set of SNPs were masked for all ~36k target animals to test imputation accuracy
+6) True and imputed genotypes for the 52 SNPs and ~36k target animals were subsetted from the full dataset
+
 
 # TOOLS:
 R: Packages data.table and reshape2 – offer quicker manipulations of large data frames
@@ -15,9 +23,15 @@ R: Packages data.table and reshape2 – offer quicker manipulations of large dat
 - infoFile.csv: Breed information on each animal as well as Principal Components from full genome
 - TrueGenotypes.vcf: True Genotypes on each animal to compute accuracy statistics
 - ImputedData_xxx.vcf: Imputed genotypes based on reference population xxx with options
-   - xxx1
-   - xxx2
-   - xxx3
+   - All WGS animals: ImputedData_ALL_WGS.vcf
+   - NZ WGS animals: ImputedData_NZ_WGS.vcf
+   - NZ + AUS WGS animals: ImputedData_NZ_AUS_WGS.vcf
+   - AUS WGS animals: ImputedData_AUS_WGS.vcf
+   - Other WGS animals: ImputedData_Other_WGS.vcf
+   - Other + AUS animals: ImputedData_Other_AUS_WGS.vcf
+   - LPChoose + WGS animals: ImputedData_LPChoose_WGS.vcf
+   - Random + WGS animals: ImputedData_Random_WGS.vcf   
+   
    
 # PROCEDURES:
 ## 1) Load modules
@@ -46,9 +60,9 @@ head(infoFile)
  
 ```
 
-A PCA plot can give us an idea of how closely related the reference and target animals are. I have already generated the PCs using the full genome (rather than the single chromosome used in this example) and this was done using the "eigen" command run on the genomic relationship matrix. This code will be made available on the github site if you are interested in working through it independently.
+A PCA plot can give us an idea of how closely related the reference and target animals are. I have already generated the PCs using the full genome (rather than the single chromosome used in this example) and this was done using the "eigen" command run on the genomic relationship matrix. 
 
-The "PlotColour" column has been set for different colours based on breed, with WGS animals a different colour, based on either "NZ" or "Other" as the country that provided the WGS.
+The "PlotColour" column has been set for different colours based on breed, with WGS animals a different colour, based on either "NZ" or "Other" as the country that provided the WGS, and LPChoose or Randomly selected animals different colours.
 ```
 par(bg = "gray") # set a gray background so you can see the colours more clearly
 plot(infoFile$PC1,infoFile$PC2,pch=19,col=as.character(infoFile$PlotColour),xlab="PC1",ylab="PC2")
