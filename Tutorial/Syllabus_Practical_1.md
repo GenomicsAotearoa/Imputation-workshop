@@ -81,16 +81,6 @@ Some other things you can try by changing the "PlotColour" column in the above c
 ## 3) Impact of Different Imputation Sets
 Here, we’ll test the impact of using different reference sets for imputation of individuals with 50k genotypes to HD genotypes. We have run BEAGLE 5.1 a number of times using a variety of reference populations and provided the output files for you to evaluate imputation accuracy. These files contain the imputed genotypes for the target animals (i.e. animals with 50k genotypes) for a set of SNPs that have been masked to test imputation accuracy.
 
-Reference Population:
-- All WGS animals: ImputedData_ALL_WGS.vcf
-- NZ WGS animals: ImputedData_NZ_WGS.vcf
-- NZ + AUS WGS animals: ImputedData_NZ_AUS_WGS.vcf
-- AUS WGS animals: ImputedData_AUS_WGS.vcf
-- Other WGS animals: ImputedData_Other_WGS.vcf
-- Other + AUS animals: ImputedData_Other_AUS_WGS.vcf
-- LPChoose + WGS animals: ImputedData_LPChoose_WGS.vcf
-- Random + WGS animals: ImputedData_Random_WGS.vcf
-
 First we will call 2 packages that will help read and format large datasets
 ```
 require(data.table)
@@ -153,6 +143,15 @@ rownames(true2) = paste("C",true$"#CHROM","_P",true$POS,sep="")
 
 
 Change "imputed_file1" or "imputed_file2" in the code below to compare accuracies between the different reference populations.
+Reference Population:
+- All WGS animals: ImputedData_ALL_WGS.vcf
+- NZ WGS animals: ImputedData_NZ_WGS.vcf
+- NZ + AUS WGS animals: ImputedData_NZ_AUS_WGS.vcf
+- AUS WGS animals: ImputedData_AUS_WGS.vcf
+- Other WGS animals: ImputedData_Other_WGS.vcf
+- Other + AUS animals: ImputedData_Other_AUS_WGS.vcf
+- LPChoose + WGS animals: ImputedData_LPChoose_WGS.vcf
+- Random + WGS animals: ImputedData_Random_WGS.vcf
 
 ```
 imputed_file1="ImputedData_Other_WGS.vcf"
