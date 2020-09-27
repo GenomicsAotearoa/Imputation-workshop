@@ -55,74 +55,25 @@ plot(infoFile$PC1,infoFile$PC2,pch=19,col=infoFile$PlotColour)
 
 Now that you have the PCA plot you can look at the relationships between those animals that have WGS and will be used as the reference set of animals, and the target population.
 
+#### Extra Exploration of Data
 Some other things you can try by changing the "PlotColour" column in the above code"
 - How do Australian WGS animals compare with Other WGS animals?
 - How representative are the samples that were selected by LPChoose (LPChoose column)? These were selected based on the WGS animals already being in the reference population.
 
 ## 3) Impact of Different Imputation Sets
+Here, we’ll test the impact of using different reference sets for imputation of individuals with 50k genotypes to HD genotypes. We have run BEAGLE 5.1 a number of times using a variety of reference populations and provided the output files for you to evaluate imputation accuracy. These files contain the imputed genotypes for the target animals (i.e. animals with 50k genotypes) for a set of SNPs that have been masked to test imputation accuracy.
 
+Reference Population:
+- All WGS animals: ImputedData_ALL_WGS.vcf.gz
+- NZ WGS animals: ImputedData_NZ_WGS.vcf.gz
+- NZ + AUS WGS animals: ImputedData_NZ_AUS_WGS.vcf.gz
+- AUS WGS animals: ImputedData_AUS_WGS.vcf.gz
+- Other WGS animals: ImputedData_Other_WGS.vcf.gz
+- Other + AUS animals: ImputedData_Other_AUS_WGS.vcf.gz
+- LPChoose + WGS animals: ImputedData_LPChoose_WGS.vcf.gz
+- Random + WGS animals: ImputedData_Random_WGS.vcf.gz
 
-STEP 6: Assess the impact of using different reference sets for imputation
-
-Background: Here, we’ll test the impact of using different reference sets for imputation of individuals with 50k genotypes to HD genotypes. We have created a series of files containing different sets of reference individuals:
-
-LPChoose_HD.ans
-Random_HD.ans
-UNREL_WGS_IDs.txt
-UNREL_AUS_WGS_IDs.txt
-ALL_WGS_IDs.txt
-NZ_WGS_IDs.txt
-NZ_AUS_WGS_IDs.txt
-AUS_WGS_IDs.txt
-
-```
-These files can be used to subset our HD genotype file HD_SNPs_26_All_Ans.vcf.gz, e.g. in bcftools:
-bcftools view -Oz -S UNREL_WGS_IDs.txt HD_SNPs_26_All_Ans.vcf.gz > HD_SNPs_26_Unrelated_WGS_Ans.vcf.gz
-
-bcftools view -Oz -S NZ_WGS_IDs.txt HD_SNPs_26_All_Ans.vcf.gz > HD_SNPs_26_NZ_WGS_Ans.vcf.gz
-
-We will also want to make sure our 50k genotypes don’t contain any reference individuals:
-bcftools view -Oz -S Target_HD_50K_Overlap.ans HD_50K_Overlap_SNPs_26_All_Ans.vcf.gz > HD_50K_Overlap_SNPs_26_Target_Ans.vcf.gz
-
-To assess imputation accuracy, we have masked 10% of the 50k genotypes:
-HD_50K_Overlap_Masked_SNPs.pos
-HD_50K_Overlap_Kept_SNPs.pos
-
-##50k SNP set for Imputation##
-bcftools view -Oz -T HD_50K_Overlap_Kept_SNPs.pos HD_50K_Overlap_SNPs_26_Target_Ans.vcf.gz > HD_50K_Overlap_SNPs_26_Target_Ans_kept.vcf.gz
-
-##50k SNP masked set of genotypes – true genotypes##
-bcftools view -Oz -T HD_50K_Overlap_Masked_SNPs.pos HD_50K_Overlap_SNPs_26_Target_Ans.vcf.gz > HD_50K_Overlap_SNPs_26_Target_Ans_masked.vcf.gz
-
-gunzip HD_50K_Overlap_SNPs_26_Target_Ans_masked.vcf.gz
-
-sed -i 's@0/0:.:.:.:.@'0'@g' HD_50K_Overlap_SNPs_26_Target_Ans_masked.vcf
-sed -i 's@0/1:.:.:.:.@'1'@g' HD_50K_Overlap_SNPs_26_Target_Ans_masked.vcf
-sed -i 's@1/0:.:.:.:.@'1'@g' HD_50K_Overlap_SNPs_26_Target_Ans_masked.vcf
-sed -i 's@1/1:.:.:.:.@'2'@g' HD_50K_Overlap_SNPs_26_Target_Ans_masked.vcf
-sed -i 's@./.:.:.:.:.@'NA'@g' HD_50K_Overlap_SNPs_26_Target_Ans_masked.vcf
-
-From here, we can impute using various reference sets, e.g.:
-##Phase reference sets##
-beagle gt=HD_SNPs_26_Unrelated_WGS_Ans.vcf.gz nthreads=16 ne=500 out=HD_SNPs_26_Unrelated_WGS_Ans_phased
-
-beagle gt=HD_SNPs_26_NZ_WGS_Ans.vcf.gz nthreads=16 ne=500 out=HD_SNPs_26_NZ_WGS_Ans_phased
-
-##Impute target using reference##
-beagle gt=HD_50K_Overlap_SNPs_26_Target_Ans_kept.vcf.gz ref=HD_SNPs_26_Unrelated_WGS_Ans_phased.vcf.gz nthreads=16 ne=500 out=HD_50K_Overlap_SNPs_26_Target_Ans_Imputed_with_Unrelated_WGS_Ans
-
-beagle gt=HD_50K_Overlap_SNPs_26_Target_Ans_kept.vcf.gz ref=HD_SNPs_26_NZ_WGS_Ans_phased.vcf.gz nthreads=16 ne=500 out=HD_50K_Overlap_SNPs_26_Target_Ans_Imputed_with_NZ_WGS_Ans
-
-To assess imputation accuracy, we’ll trim down the output to only include the masked SNPs:
-bcftools index HD_50K_Overlap_SNPs_26_Target_Ans_Imputed_with_Unrelated_WGS_Ans.vcf.gz
-bcftools view -Oz -T HD_50K_Overlap_Masked_SNPs.pos HD_50K_Overlap_SNPs_26_Target_Ans_Imputed_with_Unrelated_WGS_Ans.vcf.gz > HD_50K_Overlap_SNPs_26_Target_Ans_Imputed_with_Unrelated_WGS_Ans_masked_SNPs.vcf.gz
-
-bcftools index HD_50K_Overlap_SNPs_26_Target_Ans_Imputed_with_NZ_WGS_Ans.vcf.gz
-bcftools view -Oz -T HD_50K_Overlap_Masked_SNPs.pos HD_50K_Overlap_SNPs_26_Target_Ans_Imputed_with_NZ_WGS_Ans.vcf.gz > HD_50K_Overlap_SNPs_26_Target_Ans_Imputed_with_NZ_WGS_Ans_masked_SNPs.vcf.gz
-
-```
-
-##ASSESS IMPUTATION ACCURACY FOR THE DIFFERENT SETS - CHANGE "imputed_file"###
+Change "imputed_file1" or "imputed_file2" in the code below to compare accuracies between the different reference populations.
 
 ```{R}
 require(data.table)
@@ -244,3 +195,8 @@ summary(dancorb)
 t.test(dancora, dancorb, paired = TRUE, alternative = "two.sided")
 
 ```
+
+#### Extra Exploration of Data
+Merge the imputed_files with the info file and you can further explore:
+- Does the imputation accuracy depend on the breed? Is the same reference set the best for all breeds? You can use the aggregate function to look at this.
+- Try plotting the PCA plot from above but change the size of the points to reflect imputation accuracy. Are there still animals that are poorly imputed?
