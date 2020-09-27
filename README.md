@@ -35,6 +35,6 @@ Final Discussion (4:30-5:00)
 
 ---
 
-Please use the <a href="https://pad.riseup.net/p/28_09_2020-Imputation-Workshop>Collaborative Document</a> for group communication.
+Please use the <a href="https://pad.riseup.net/p/28_09_2020-Imputation-Workshop">Collaborative Document</a> for group communication.
 
 If you have any questions or comments, please don’t hesitate to get in touch.
