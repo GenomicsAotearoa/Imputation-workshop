@@ -83,7 +83,7 @@ library(reshape2)
 Then we will load some functions to help us process the data
 ```
 getGenotypeCalls = function(imputedVCF){
-   imputed= imputedVCF [,-c(1:9)]
+   imputed= imputedVCF[,-c(1:9)]
    imputed=as.data.frame(unlist(imputed))
    colnames(imputed)="var"
    imputed <- colsplit(imputed$var, ":", c("genotype", "dosage"))
@@ -93,14 +93,20 @@ getGenotypeCalls = function(imputedVCF){
    a[a=="0|1"]<-1
    a[a=="0|0"]<-0
    a=as.data.frame(a)
+   colnames(a) = colnames(imputedVCF)[10:ncol(imputedVCF)]
+   rownames(a) = paste("C", imputedVCF$"#CHROM","_P", imputedVCF$POS,sep="")
+   a
 }
 
 getDosages = function(imputedVCF){
-   imputed= imputedVCF [,-c(1:9)]
+   imputed= imputedVCF[,-c(1:9)]
    imputed=as.data.frame(unlist(imputed))
    colnames(imputed)="var"
    imputed <- colsplit(imputed$var, ":", c("genotype", "dosage"))
    a=as.data.frame(matrix(imputed$dosage,nrow(imputedVCF)))
+   colnames(a) = colnames(imputedVCF)[10:ncol(imputedVCF)]
+   rownames(a) = paste("C", imputedVCF$"#CHROM","_P", imputedVCF$POS,sep="")
+   a
 }
 ```
 
