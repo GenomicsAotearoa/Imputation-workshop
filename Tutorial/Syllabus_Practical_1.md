@@ -74,60 +74,78 @@ Reference Population:
 - LPChoose + WGS animals: ImputedData_LPChoose_WGS.vcf.gz
 - Random + WGS animals: ImputedData_Random_WGS.vcf.gz
 
-Change "imputed_file1" or "imputed_file2" in the code below to compare accuracies between the different reference populations.
-
-```{R}
+First we will call 2 packages that will help read and format large datasets
+```
 require(data.table)
 library(reshape2)
+```
 
-imputed_file1="HD_50K_Overlap_SNPs_26_Target_Ans_Imputed_with_Unrelated_WGS_Ans_masked_SNPs.vcf.gz"
-imputed_file2="HD_50K_Overlap_SNPs_26_Target_Ans_Imputed_with_NZ_WGS_Ans_masked_SNPs.vcf.gz"
-true=fread("HD_50K_Overlap_SNPs_26_Target_Ans_masked.vcf",skip=5765)
-true2=true[,-c(1:9)]
-true2=as.matrix(true2)
+Then we will load some functions to help us process the data
+```
+getGenotypeCalls = function(imputedVCF){
+   imputed= imputedVCF [,-c(1:9)]
+   imputed=as.data.frame(unlist(imputed))
+   colnames(imputed)="var"
+   imputed <- colsplit(imputed$var, ":", c("genotype", "dosage"))
+   a=matrix(imputed$genotype,nrow(imputedVCF))
+   a[a=="1|1"]<-2
+   a[a=="1|0"]<-1
+   a[a=="0|1"]<-1
+   a[a=="0|0"]<-0
+   a=as.data.frame(a)
+}
 
-imputed1=fread(imputed_file1)
-imputed2=fread(imputed_file2)
+getDosages = function(imputedVCF){
+   imputed= imputedVCF [,-c(1:9)]
+   imputed=as.data.frame(unlist(imputed))
+   colnames(imputed)="var"
+   imputed <- colsplit(imputed$var, ":", c("genotype", "dosage"))
+   a=as.data.frame(matrix(imputed$dosage,nrow(imputedVCF)))
+}
+```
 
-imputeda=imputed1[,-c(1:9)]
-imputeda=as.data.frame(unlist(imputeda))
-colnames(imputeda)="var"
-imputeda <- colsplit(imputeda$var, ":", c("left", "right"))
-a=matrix(imputeda$left,nrow(imputed1),ncol(imputed1)-9)
-a[a=="1|1"]<-2
-a[a=="1|0"]<-1
-a[a=="0|1"]<-1
-a[a=="0|0"]<-0
-a=as.data.frame(a)
-a2=matrix(imputeda$right,nrow(imputed1),ncol(imputed1)-9)
+Read in and format the true genotypes
+```
+true=fread(paste(maindir,"TrueGenotypes.vcf",sep=""),skip=5765)
+true2=as.matrix(true[,-c(1:9)])
+colnames(true2) = colnames(true)[10:ncol(true)]
+rownames(true2) = paste("C",true$"#CHROM","_P",true$POS,sep="")
+```
 
-imputedb=imputed2[,-c(1:9)]
-imputedb=as.data.frame(unlist(imputedb))
-colnames(imputedb)="var"
-imputedb <- colsplit(imputedb$var, ":", c("left", "right"))
-b=matrix(imputedb$left,nrow(imputed2),ncol(imputed2)-9)
-b[b=="1|1"]<-2
-b[b=="1|0"]<-1
-b[b=="0|1"]<-1
-b[b=="0|0"]<-0
-b=as.data.frame(b)
-b2=matrix(imputedb$right,nrow(imputed2),ncol(imputed2)-9)
+
+Change "imputed_file1" or "imputed_file2" in the code below to compare accuracies between the different reference populations.
+
+```
+imputed_file1="ImputedData_Other_WGS.vcf.gz"
+imputed_file2="ImputedData_NZ_WGS.vcf.gz"
+
+imputed1=fread(paste(mkdir,imputed_file1,sep=""))
+imputed2=fread(paste(mkdir,imputed_file2,sep=""))
+
+genos1 = getGenotypeCalls(imputed1) 
+genos2 = getGenotypeCalls(imputed2) 
+
+dosage1 = getDosages(imputed1) 
+dosage2 = getDosages(imputed2) 
 
 
 ##Concordance##
-al=a==true2
-al2=al
-al2[which(is.na(true2))] = NA
-acca=colMeans(al2,na.rm=T) ##Individual Concordance
-sncona=rowMeans(al2,na.rm=T)##SNP Concordance
-summary(sncona)
+genoConc1 = genos1 == true2  
+genoConc12 = genoConc1  
+genoConc12[which(is.na(true2))] = NA
+IndAcc1 = colMeans(genoConc12,na.rm=T) ## Individual Concordance
+summary(IndAcc1)
+SNPAcc1 = rowMeans(genoConc12,na.rm=T) ## SNP Concordance
+summary(SNPAcc1)
 
-bl=b==true2
-bl2=bl
-bl2[which(is.na(true2))] = NA
-accb=colMeans(bl2,na.rm=T) ##Individual Concordance
-snconb=rowMeans(bl2,na.rm=T)##SNP Concordance
-summary(snconb)
+genoConc2 = genos2 == true2  
+genoConc22 = genoConc2  
+genoConc22[which(is.na(true2))] = NA
+IndAcc2 = colMeans(genoConc22,na.rm=T) ## Individual Concordance
+summary(IndAcc2)
+SNPAcc2 = rowMeans(genoConc22,na.rm=T) ## SNP Concordance
+summary(SNPAcc2)
+
 
 ##Dosage R2 from Beagle##
 dra=sapply(strsplit(as.character(imputed1$INFO),";"),"[",1)
