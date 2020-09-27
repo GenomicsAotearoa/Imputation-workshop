@@ -36,7 +36,7 @@ R
 
 Generate link to the workshop folder
 ```
-maindir = "/nesi/nobackup/nesi02659/SEP28/practical2/"
+maindir = "/nesi/nobackup/nesi02659/SEP28/practical1/"
 ```
 
 Read in the info file and take a look at it
