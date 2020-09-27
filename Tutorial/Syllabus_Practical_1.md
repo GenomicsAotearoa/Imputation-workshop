@@ -43,6 +43,7 @@ Read in the info file and take a look at it
 ```
 infoFile = paste(maindir,"infoFile.csv",sep="")
 head(infoFile)
+ '/nesi/nobackup/nesi02659/SEP28/practical2/infoFile.csv'
 ```
 
 A PCA plot can give us an idea of how closely related the reference and target animals are. I have already generated the PCs using the full genome (rather than the single chromosome used in this example) and this was done using the "eigen" command run on the genomic relationship matrix. This code will be made available on the github site if you are interested in working through it independently.
