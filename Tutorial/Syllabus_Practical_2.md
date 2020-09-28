@@ -4,10 +4,7 @@
 3. Know how to evaluate the imputation performance
 
 # Tools we need
-
->All of these tools/applications are pre-installed in the training platform 
-
-BCFtools: basic bioinformatics software, in this tutorial, we use it for creating subsets and quality control. the current version is 1.10.2-GCC-9.2.0 ([http://samtools.github.io/bcftools/bcftools.html](http://samtools.github.io/bcftools/bcftools.html))
+BCFtools: basic bioinformatics software, in this tutorial, we use it for creating subsets and quality control. the current version is 1.9-GCC-7.4.0. ([http://samtools.github.io/bcftools/bcftools.html](http://samtools.github.io/bcftools/bcftools.html))
 
 VCFtools: basic bioinformatics software, in this tutorial, we use it for comparing two vcf files and evaluate the concordance rate. The current version is /0.1.15-GCC-9.2.0-Perl-5.30.1 ([https://vcftools.github.io/index.html](https://vcftools.github.io/index.html))
 
@@ -27,11 +24,11 @@ To find modules which are already available on NeSI, use `module spider #module_
 To load modules and start using, use `module load #module_name`
 
 ``` bash
-module load BCFtools/1.10.2-GCC-9.2.0
+module load BCFtools/1.9-GCC-7.4.0
 module load VCFtools/0.1.15-GCC-9.2.0-Perl-5.30.1
 module load R/4.0.1-gimkl-2020a
 module load Beagle/5.1-18May20.d20 
-#minimac3=/nesi/nobackup/nesi02659/SEP28/practical2/Minimac3
+module load Minimac3/2.0.1
 ```
 
 ## 2. Copy the files into the home directory
@@ -39,11 +36,11 @@ Define two directories: workshop directory and home directory. In this workshop,
 
 ```
 maindir=/nesi/nobackup/nesi02659/SEP28/practical2
-cd $HOME
+cd $Home
 ```
 ```
 mkdir -p imputation_workshop
-cd $HOME/imputation-workshop
+cd ~/imputation_workshop
 ```
 
 The main input file (seqvcf) is extracted (from 30MB to 35MB) on chr13 from 1000 human genome data. I selected some of the reliable SNPs to generate a HD genotype dataset(hdvcf). 
@@ -56,10 +53,8 @@ hdvcf=$maindir/hd_5MB.vcf.gz
 Now what you need to do is to cp both genotype and sequence data to your own home directory. In addition, we have to software that we need to use which are not available on NeSI. Please also copy these two files in your own working directory.
 
 ```
-cp $seqvcf $HOME/imputation-workshop
-cp $hdvcf $HOME/imputation-workshop
-cp $beagle5 $HOME/imputation-workshop
-cp $minimac3 $HOME/imputation-workshop
+cp $seqvcf ~/imputation_workshop
+cp $hdvcf ~/imputation_workshop
 ```
 
 The genotype and sequence files use "vcf.gz" format. We can not open it directly. To check how the genotype looks like, you need to use: zless -S. -S is to make the file well formated. 
@@ -128,18 +123,18 @@ cd imputation
 bcftools is very handy of extracting the sample from the whole dataset via using -S. We will generate two files for our study samples: one from HD genotype as my study population. And another one from filtered sequence data for future validation. After extraction, we use function tabix to index both files.
 
 ```
-bcftools view -O z -o study_hd.vcf.gz -S $HOME/study.ID $HOME/hd_5MB.vcf.gz
+bcftools view -O z -o study_hd.vcf.gz -S ~/imputation_workshop/study.ID ~/imputation_workshop/hd_5MB.vcf.gz
 tabix -f study_hd.vcf.gz
-bcftools view -O z -o study_filtered.vcf.gz -S $HOME/study.ID $HOME/nosingleton_2alleles.vcf.gz #for validation
+bcftools view -O z -o study_filtered.vcf.gz -S ~/imputation_workshop/study.ID ~/imputation_workshop/nosingleton_2alleles.vcf.gz #for validation
 tabix -f study_filtered.vcf.gz
 ```
 
 Similarly, we will extract the samples for our reference samples. The same functions will be used here. We will generate two files for the reference samples, one is from the original unfiltered sequence, and another one from the filtered sequence. Again, we will use tabix to index these two files. 
 
 ```
-bcftools view -O z -o ref_nonfiltered.vcf.gz -S $HOME/ref.ID $HOME/nonfilter_seq_5MB.vcf.gz
+bcftools view -O z -o ref_nonfiltered.vcf.gz -S ~/imputation_workshop/ref.ID ~/imputation_workshop/nonfilter_seq_5MB.vcf.gz
 tabix -f ref_nonfiltered.vcf.gz
-bcftools view -O z -o ref_filtered.vcf.gz -S $HOME/ref.ID $HOME/nosingleton_2alleles.vcf.gz
+bcftools view -O z -o ref_filtered.vcf.gz -S ~/imputation_workshop/ref.ID ~/imputation_workshop/nosingleton_2alleles.vcf.gz
 tabix -f ref_filtered.vcf.gz
 ```
 
@@ -163,7 +158,7 @@ tabix -f ref_nonfiltered_phased.vcf.gz
 
 In this tutorial, I will show you the imputation using two software: Beagle 5 and minimac3. Both software are very stable, reliable, easy-to-use, free, and pretty popular. Beagle 5 is computationally demanding but can give you accurate results very fast. Minimac is computationally efficient, but a bit slower. In addition, to prove that quality control is an important procedure, both filtered reference and unfiltered sequence reference will be used.
 
-Beagle has been evolved from version 3.0 to the current 5.1 version. It becomes much faster and simpler. And be able to handle large datasets. In th e meantime, the parameters for running the software have been reduced a lot. There are several important parameters that can influence imputation performance such as effective population size (Ne), window size, etc. Check the following paper: Improving Imputation Quality in BEAGLE for Crop and Livestock Data [https://www.g3journal.org/content/10/1/177](https://www.g3journal.org/content/10/1/177)
+Beagle has been evolved from version 3.0 to the current 5.1 version. It becomes much faster and simpler. And be able to handle large datasets. In the meantime, the parameters for running the software have been reduced a lot. There are several important parameters that can influence imputation performance such as effective population size (Ne), window size, etc. Check the following paper: Improving Imputation Quality in BEAGLE for Crop and Livestock Data [https://www.g3journal.org/content/10/1/177](https://www.g3journal.org/content/10/1/177)
 
 ```
 beagle gt=study_hd.vcf.gz ref=ref_filtered_phased.vcf.gz chrom=13 impute=true gp=true out=HD_to_seq_filtered_beagle5
@@ -180,15 +175,15 @@ tabix -f HD_to_seq_nonfiltered_beagle5.vcf.gz
 The imputation process for using minimac3 is rather similar. It is more efficient than Beagle 5 but slightly slower. It takes ~10 mins to impute to filtered sequence reference and ~15 mins to impute to unfiltered sequence reference. I have already done the process, so you can just copy the outputs from the project folder to the current imputation folder. 
 
 ```
-#$minimac3 --refHaps ref_filtered_phased.vcf.gz --haps study_hd.vcf.gz --prefix HD_to_seq_filtered_minimac3
+#Minimac3 --refHaps ref_filtered_phased.vcf.gz --haps study_hd.vcf.gz --prefix HD_to_seq_filtered_minimac3
 #tabix -f HD_to_seq_filtered_minimac3.dose.vcf.gz
-#$minimac3 --refHaps ref_nonfiltered_phased.vcf.gz --haps study_hd.vcf.gz --prefix HD_to_seq_nonfiltered_minimac3
+#Minimac3 --refHaps ref_nonfiltered_phased.vcf.gz --haps study_hd.vcf.gz --prefix HD_to_seq_nonfiltered_minimac3
 #tabix -f HD_to_seq_nonfiltered_minimac3.dose.vcf.gz
 ```
 
 ```
-cp $maindir/HD_to_seq_filtered_minimac3.* $HOME/imputation-workshop/imputation
-cp $maindir/HD_to_seq_nonfiltered_minimac3.* $HOME/imputation-workshop/imputation
+cp $maindir/HD_to_seq_filtered_minimac3.* ~/imputation_workshop/imputation
+cp $maindir/HD_to_seq_nonfiltered_minimac3.* ~/imputation_workshop/imputation
 ```
 
 ## 9. Calculate the genotype concordance using vcf-compare (from VCFtools)
@@ -254,6 +249,7 @@ So we got four output here. and we are gonna pop them in R to have a look:
 The first step is to read in all our output files in R
 
 ```
+setwd("~/imputation_workshop/imputation")
 filteredBG5 <- read.table("HD_to_seq_filtered_beagle5.r2")
 nonfilteredBG5 <- read.table("HD_to_seq_nonfiltered_beagle5.r2")
 filteredminimac3 <- read.table("HD_to_seq_filtered_minimac3.info", header=T)
@@ -270,7 +266,7 @@ nonfilteredminimac3$Pos <- substr(nonfilteredminimac3$SNP, 4, 11)
 ```
 The next step is to extract the R-square for beagle 5. Usually, it shouldn't be a problem, you get the number in that column directly. However, in this session, we used the unfiltered reference, which contains the multi-allelic positions. In this case, Beagle will give you multiple possible solutions for those multi-allelic positions. In this case, we just take the first solution to make things easier. Here you may see a warning message mentioned `NA` generated. Don't worry about that.  
 
-```r
+```
 filteredBG5$DR2_filtered_BG5 <- filteredBG5$V8
 nonfilteredBG5$DR2_nonfiltered_BG5 <- as.numeric(substr(nonfilteredBG5$V8, 1, 4))
 filteredminimac3$Rsq_filtered_minimac3 <- filteredminimac3$Rsq
@@ -300,17 +296,13 @@ As I also mentioned allelic/dosage-r square is a good parameter for evaluating t
 ![](https://github.com/GenomicsAotearoa/Imputation-workshop/blob/master/Tutorial/img/Screen%20Shot%202020-09-16%20at%2015.13.24.png?raw=true)
 
 ```
-pdf()
 plot(finalmerge$MAF.x,finalmerge$DR2_filtered_BG5, pch=4)
-dev.off()
 ```
 
 ![](https://github.com/GenomicsAotearoa/Imputation-workshop/blob/master/Tutorial/img/image003.png?raw=true)
 
 ```
-pdf()
 plot(finalmerge$MAF.x,finalmerge$Rsq_filtered_minimac3, pch=4)
-dev.off()
 ```
 
 ![](https://github.com/GenomicsAotearoa/Imputation-workshop/blob/master/Tutorial/img/image002.png?raw=true)
@@ -318,9 +310,7 @@ dev.off()
 And also, we can also have a look at the correlation between the allelic/dosage-r square from beagle 5 and minimac3. 
 
 ```
-pdf()
 plot(finalmerge$DR2_filtered_BG5,finalmerge$Rsq_filtered_minimac3, pch=4)
-dev.off()
 ```
 
 ![](https://github.com/GenomicsAotearoa/Imputation-workshop/blob/master/Tutorial/img/image001.png?raw=true)
