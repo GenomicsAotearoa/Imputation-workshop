@@ -19,6 +19,7 @@ The schedule for the 11th of August will be as follows:
  
 ## Afternoon: Practical (1:00pm-5:00pm)
 13:00-15:30 Tutorial
+https://github.com/GenomicsAotearoa/Imputation-workshop/wiki/Tutorial-for-the-afternoon
 
 15:30-16:00 Questions and final discussion 
 
