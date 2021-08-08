@@ -7,7 +7,7 @@ This specialist workshop, hosted by LIC with the support of Genomics Aotearoa an
 ## Prerequisites:
 To get the most out of this workshop, it is encouraged that attendees know about basic genetics and genomics and have familiarity with bash and R.
 
-# The schedule for the 11th of August will be as follows:
+## The schedule for the 11th of August will be as follows:
 
 ## Morning: Theory (9:00am-12:00pm)
 9:00-9:30  Test NeSI access & Greeting
