@@ -305,9 +305,11 @@ To calculate the dosage R-square, beagle 5 does not provide a seperate file. You
 
 The columns of the file we generated are chromosome, position, SNP name, reference allele, alternative allele, quality, filter, **dosage r-square,** allele frequency, whether it is imputed. It is a thoughtful enough file that provides us all the information, the only additional part we may need to do is calculate the minor allele frequency from allele frequency.
 
-```
-head HD_to_seq_filtered_beagle5.r2
-```
+!!! r-project "code"
+
+    ```bash
+    head HD_to_seq_filtered_beagle5.r2
+    ```
 ![](https://github.com/GenomicsAotearoa/Imputation-workshop/blob/master/Tutorial/img/Screen%20Shot%202020-09-16%20at%2014.56.35.png?raw=true)
 
 minimac3 generate an info file after it finishes imputing. It is pretty thoughtful that it provides us minor allele frequency directly. The troubling part is that we have to extract the position from the SNP column for future comparison. 
