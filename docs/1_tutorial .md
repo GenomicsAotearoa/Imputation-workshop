@@ -25,13 +25,11 @@
     
     Minimac3: software for imputation ([https://genome.sph.umich.edu/wiki/Minimac3](https://genome.sph.umich.edu/wiki/Minimac3))
     
-# Input files
-In this tutorial, we used 5MB segment (30-35MB) of chr13 from the 1000 Genome phase 3, which is publicly available and can be downloaded from https://mathgen.stats.ox.ac.uk/impute/impute_v2.html
+!!! file-code "Input files"
 
+    In this tutorial, we used 5MB segment (30-35MB) of chr13 from the 1000 Genome phase 3, which is publicly available and can be downloaded from https://mathgen.stats.ox.ac.uk/impute/impute_v2.html
+    
 # Procedures
-## 0. Log on Jupyter Notebook
-
-In this workshop we are going to use Jupyter notebook for our analysis, which is simple and applicable for both command-line and R session. All you need to do is to longin on this website: https://jupyter.nesi.org.nz/hub/login
 
 
 ## 1. Load the modules that are required on NeSI
@@ -39,46 +37,58 @@ To find modules that are already available on NeSI, use `module spider #module_n
 
 To load modules and start using, use `module load #module_name`
 
-``` bash
-module load BCFtools/1.9-GCC-7.4.0
-module load VCFtools/0.1.15-GCC-9.2.0-Perl-5.30.1
-module load R/4.0.1-gimkl-2020a
-module load Beagle/5.1-18May20.d20 
-module load Minimac3/2.0.1
-```
+!!! terminal "code"
+
+    ``` bash
+    module load BCFtools/1.9-GCC-7.4.0
+    module load VCFtools/0.1.15-GCC-9.2.0-Perl-5.30.1
+    module load R/4.0.1-gimkl-2020a
+    module load Beagle/5.1-18May20.d20 
+    module load Minimac3/2.0.1
+    ```
 
 ## 2. Copy the files into the home directory
 Define two directories: workshop directory and home directory. In this workshop, the analysis will be conducted in the home directory
 
-```
-maindir=/nesi/project/nesi02659/imputation2021
-cd $Home
-```
-```
-mkdir -p imputation_workshop
-cd ~/imputation_workshop
-```
+!!! terminal "code"
+    
+    ```bash
+    maindir=/nesi/project/nesi02659/imputation2021
+    cd $Home
+    ```
+!!! terminal "code"
+
+    ```bash
+    mkdir -p imputation_workshop
+    cd ~/imputation_workshop
+    ```
 
 The main input file (seqvcf) is extracted (from 30MB to 35MB) on chr13 from 1000 human genome data. I selected some of the reliable SNPs to generate a HD genotype dataset(hdvcf). 
 
-```
-seqvcf=$maindir/nonfilter_seq_5MB.vcf.gz
-hdvcf=$maindir/hd_5MB.vcf.gz
-```
+!!! terminal "code"
+
+    ```bash
+    seqvcf=$maindir/nonfilter_seq_5MB.vcf.gz
+    hdvcf=$maindir/hd_5MB.vcf.gz
+    ```
 
 Now what you need to do is to cp both genotype and sequence data to your own home directory. In addition, we have to software that we need to use which are not available on NeSI. Please also copy these two files in your own working directory.
 
-```
-cp $seqvcf ~/imputation_workshop
-cp $hdvcf ~/imputation_workshop
-```
+!!! terminal "code"
+
+    ```bash
+    cp $seqvcf ~/imputation_workshop
+    cp $hdvcf ~/imputation_workshop
+    ```
 
 The genotype and sequence files use "vcf.gz" format. We can not open it directly. To check how the genotype looks like, you need to use: zless -S. -S is to make the file well formatted. 
 
-```
-zless -S $seqvcf
-zless -S $hdvcf
-```
+!!! terminal "code"
+
+    ```bash
+    zless -S $seqvcf
+    zless -S $hdvcf
+    ```
 
 ## 3. Explore the input file
 
@@ -88,13 +98,15 @@ When you got the dataset, the most important informaiton you may want to know is
 
 To have a basic idea of the genotype, BCFtools have a very convenient function to extract this information (https://samtools.github.io/bcftools/howtos/query.html)
 
-``` 
-bcftools query -l nonfilter_seq_5MB.vcf.gz | head 
-bcftools query -l nonfilter_seq_5MB.vcf.gz | wc
+!!! terminal "code"
 
-bcftools query -f '%CHROM\t%POS\n' nonfilter_seq_5MB.vcf.gz | head 
-bcftools query -f '%CHROM\t%POS\n' nonfilter_seq_5MB.vcf.gz | wc 
-``` 
+    ```bash
+    bcftools qury -l nonfilter_seq_5MB.vcf.gz | head 
+    bcftools query -l nonfilter_seq_5MB.vcf.gz | wc
+    
+    bcftools query -f '%CHROM\t%POS\n' nonfilter_seq_5MB.vcf.gz | head 
+    bcftools query -f '%CHROM\t%POS\n' nonfilter_seq_5MB.vcf.gz | wc 
+    ``` 
 
 If you want to have a deeper understanding of the dataset, like the number of SNPs, the number of indels, sequence depth etc, BCFtools have a very convenient function: `stats`. By checking the original sequence file's information. the code you need is as below. -s is a common tag to show "samples". Samples to include or "-" to apply all variants. Via adding this, we also generate the statistics for each individual. The output will be named: original.stats
 
