@@ -1,3 +1,4 @@
+<center>![image](./theme_figures/institute_logo.png){width="550"}</center>
 <center>
 # Genotype Imputation
 </center>
