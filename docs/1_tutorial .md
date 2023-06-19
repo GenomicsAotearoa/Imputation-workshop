@@ -110,7 +110,10 @@ To have a basic idea of the genotype, BCFtools have a very convenient function t
 
 If you want to have a deeper understanding of the dataset, like the number of SNPs, the number of indels, sequence depth etc, BCFtools have a very convenient function: `stats`. By checking the original sequence file's information. the code you need is as below. -s is a common tag to show "samples". Samples to include or "-" to apply all variants. Via adding this, we also generate the statistics for each individual. The output will be named: original.stats
 
-`bcftools stats -s "-" nonfilter_seq_5MB.vcf.gz > original.stats`
+!!! terminal "code"
+    ```bash
+    bcftools stats -s "-" nonfilter_seq_5MB.vcf.gz > original.stats
+    ```
 
 Now let's have a look at the output:
 
@@ -124,12 +127,14 @@ So in the first part, you can see the basic statistics of the sequence file. We 
 
 There are a lot of parameters you may take into consideration in your dataset, such as non-variant, singletons, multi-allelic positions, map quality, mendelian error, minor allele frequency, etc. The parameter settings vary depends highly on data, and also for the purpose of data. For example, if the data is for GWAS analysis, you probably don't want to throw away too many variants since a lot of the causals are rare alleles. If your data is used for prediction, then you probably don't want to include too much crap in the data, which is not beneficial for the next step model construction.
 
-```
-bcftools view -O z -o nosingleton.vcf.gz -i 'AC>1' nonfilter_seq_5MB.vcf.gz
-tabix -f nosingleton.vcf.gz
-bcftools stats -s "-" nosingleton.vcf.gz > step1.stats
-less step1.stats
-```
+!!! terminal "code"
+
+    ```bash
+    bcftools view -O z -o nosingleton.vcf.gz -i 'AC>1' nonfilter_seq_5MB.vcf.gz
+    tabix -f nosingleton.vcf.gz
+    bcftools stats -s "-" nosingleton.vcf.gz > step1.stats
+    less step1.stats
+    ```
 
 ![](https://github.com/GenomicsAotearoa/Imputation-workshop/blob/master/Tutorial/img/Screen%20Shot%202020-09-16%20at%2014.38.50.png?raw=true)
 
