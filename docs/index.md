@@ -11,4 +11,5 @@
        - Evaluating the imputation performance using different parameters
  
 ## Prerequisites:
+
 To get the most out of this workshop, it is encouraged that attendees know about basic genetics and genomics and have familiarity with bash and R.
