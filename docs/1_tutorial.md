@@ -331,12 +331,45 @@ The data I downloaded already finished phasing that you can see in the dataset, 
 
     ```bash
     beagle gt=ref_filtered.vcf.gz chrom=13 out=ref_filtered_phased
+    ```
+    ??? success "Output"
+        ```bash
+        beagle.22Jul22.46e.jar (version 5.4)
+        Copyright (C) 2014-2022 Brian L. Browning
+        Enter "java -jar beagle.22Jul22.46e.jar" to list command line argument
+        Start time: 09:05 AM NZST on 20 Jun 2023
+        
+        Command line: java -Xmx27305m -jar beagle.22Jul22.46e.jar
+          gt=ref_filtered.vcf.gz
+          chrom=13
+          out=ref_filtered_phased
+          nthreads=4
+        
+        No genetic map is specified: using 1 cM = 1 Mb
+        
+        Reference samples:                    0
+        Study     samples:                1,000
+        
+        Window 1 [13:30000193-34999935]
+        Study     markers:               85,234
+        
+        Cumulative Statistics:
+        
+        Study     markers:               85,234
+        
+        Total time:                    16 seconds
+        
+        End time: 09:05 AM NZST on 20 June 2021
+        ```
+!!! terminal "code"
+    ```bash
     tabix -f ref_filtered_phased.vcf.gz
     ```
 !!! terminal "code"
 
     ```bash
     beagle gt=ref_nonfiltered.vcf.gz chrom=13 out=ref_nonfiltered_phased
+
     tabix -f ref_nonfiltered_phased.vcf.gz
     ```
 
