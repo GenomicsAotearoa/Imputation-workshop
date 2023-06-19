@@ -54,7 +54,7 @@ Define two directories: workshop directory and home directory. In this workshop,
     
     ```bash
     maindir=/nesi/project/nesi02659/imputation2021
-    cd $Home
+    cd ~
     ```
 !!! terminal "code"
 
@@ -101,7 +101,7 @@ To have a basic idea of the genotype, BCFtools have a very convenient function t
 !!! terminal "code"
 
     ```bash
-    bcftools qury -l nonfilter_seq_5MB.vcf.gz | head 
+    bcftools query -l nonfilter_seq_5MB.vcf.gz | head 
     bcftools query -l nonfilter_seq_5MB.vcf.gz | wc
     
     bcftools query -f '%CHROM\t%POS\n' nonfilter_seq_5MB.vcf.gz | head 
