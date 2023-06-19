@@ -117,6 +117,10 @@ plugins:
       zoomable: true
   - search:
       lang: en
+  - minify:
+      minify_html: true
+      minify_js: true
+      minify_css: true
 
 copyright : Pangenome Graphs workshop material is licensed under a <a rel="noopener" target="_blank" href="https://www.apache.org/licenses/LICENSE-2.0">APACHE LICENSE, VERSION 2.0</a>
 
