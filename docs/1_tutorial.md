@@ -43,7 +43,7 @@ To load modules and start using, use `module load #module_name`
     module load BCFtools/1.9-GCC-7.4.0
     module load VCFtools/0.1.15-GCC-9.2.0-Perl-5.30.1
     module load R/4.0.1-gimkl-2020a
-    module load Beagle/5.1-18May20.d20 
+    module load Beagle/5.4-22Jul22.46e
     module load Minimac3/2.0.1
     ```
 
