@@ -111,15 +111,21 @@ To have a basic idea of the genotype, BCFtools have a very convenient function t
 If you want to have a deeper understanding of the dataset, like the number of SNPs, the number of indels, sequence depth etc, BCFtools have a very convenient function: `stats`. By checking the original sequence file's information. the code you need is as below. -s is a common tag to show "samples". Samples to include or "-" to apply all variants. Via adding this, we also generate the statistics for each individual. The output will be named: original.stats
 
 !!! terminal "code"
+
     ```bash
     bcftools stats -s "-" nonfilter_seq_5MB.vcf.gz > original.stats
     ```
 
 Now let's have a look at the output:
 
-`less original.stats`
+!!! terminal "code"
 
-![](https://github.com/GenomicsAotearoa/Imputation-workshop/blob/master/Tutorial/img/Screen%20Shot%202020-09-16%20at%2014.37.07.png?raw=true)
+    ```bash
+    less original.stats`
+    ```
+    ??? success "Output"
+
+        ![](https://github.com/GenomicsAotearoa/Imputation-workshop/blob/master/Tutorial/img/Screen%20Shot%202020-09-16%20at%2014.37.07.png?raw=true)
 
 So in the first part, you can see the basic statistics of the sequence file. We have 2504 samples in total, with 149,854 variants. 144,069 of them are SNPs, 5777 indels, 98 other, 694 multi-allelic sites with 467 multi-allelic SNPs.  
 
@@ -133,10 +139,66 @@ There are a lot of parameters you may take into consideration in your dataset, s
     bcftools view -O z -o nosingleton.vcf.gz -i 'AC>1' nonfilter_seq_5MB.vcf.gz
     tabix -f nosingleton.vcf.gz
     bcftools stats -s "-" nosingleton.vcf.gz > step1.stats
+    ```
+!!! terminal "code"
+    ```bash
     less step1.stats
     ```
+    ??? success "Output"
+         ```bash
+         # This file was produced by bcftools stats (1.9+htslib-1.9) and can be plotted using plot-vcfstats.
+         # The command line was: bcftools stats  -s - nosingleton.vcf.gz
+         #
+         # Definition of sets:
+         # ID    [2]id   [3]tab-separated file names
+         ID      0       nosingleton.vcf.gz
+         # SN, Summary numbers:
+         #   number of records   .. number of data rows in the VCF
+         #   number of no-ALTs   .. reference-only sites, ALT is either "." or identical to REF
+         #   number of SNPs      .. number of rows with a SNP
+         #   number of MNPs      .. number of rows with a MNP, such as CC>TT
+         #   number of indels    .. number of rows with an indel
+         #   number of others    .. number of rows with other type, for example a symbolic allele or
+         #                          a complex substitution, such as ACT>TCGA
+         #   number of multiallelic sites     .. number of rows with multiple alternate alleles
+         #   number of multiallelic SNP sites .. number of rows with multiple alternate alleles, all SNPs
+         # 
+         #   Note that rows containing multiple types will be counted multiple times, in each
+         #   counter. For example, a row with a SNP and an indel increments both the SNP and
+         #   the indel counter.
+         # 
+         # SN    [2]id   [3]key  [4]value
+         SN      0       number of samples:      2504
+         SN      0       number of records:      85928
+         SN      0       number of no-ALTs:      0
+         SN      0       number of SNPs: 80184
+         SN      0       number of MNPs: 0
+         SN      0       number of indels:       5767
+         SN      0       number of others:       67
+         SN      0       number of multiallelic sites:   694
+         SN      0       number of multiallelic SNP sites:       467
+         # TSTV, transitions/transversions:
+         # TSTV  [2]id   [3]ts   [4]tv   [5]ts/tv        [6]ts (1st ALT) [7]tv (1st ALT) [8]ts/tv (1st ALT)
+         TSTV    0       56037   24616   2.28    55801   24360   2.29
+         # SiS, Singleton stats:
+         # SiS   [2]id   [3]allele count [4]number of SNPs       [5]number of transitions        [6]number of transversions      [7]number of indels     [8]repeat-consistent    [9]repeat-inconsistent  [10]not applicable
+         SiS     0       1       5       2       3       1       0       0       1
+         # AF, Stats by non-reference allele frequency:
+         # AF    [2]id   [3]allele frequency     [4]number of SNPs       [5]number of transitions        [6]number of transversions      [7]number of indels     [8]repeat-consistent    [9]repeat-inconsistent  [10]not applicable
+         AF      0       0.000000        15765   11210   4555    30      0       0       30
+         AF      0       0.000399        11934   8329    3605    896     0       0       896
+         AF      0       0.000799        6258    4337    1921    453     0       0       453
+         AF      0       0.001198        4171    2866    1305    299     0       0       299
+         AF      0       0.001597        2834    1940    894     209     0       0       209
+         AF      0       0.001997        2371    1664    707     172     0       0       172
+         AF      0       0.002396        1851    1295    556     123     0       0       123
+         AF      0       0.002796        1588    1120    468     111     0       0       111
+         AF      0       0.003195        1380    957     423     114     0       0       114
+         AF      0       0.003594        1160    780     380     95      0       0       95
+         AF      0       0.003994        988     688     300     68      0       0       68
+         AF      0       0.004393        923     633     290     77      0       0       77
+         ```
 
-![](https://github.com/GenomicsAotearoa/Imputation-workshop/blob/master/Tutorial/img/Screen%20Shot%202020-09-16%20at%2014.38.50.png?raw=true)
 
 As we can see here, after removing the non-variants and singletons, the number of variants decreased to 85,928, 80,184 SNPs, 5767 indels, 67 others, 694 multiallelic sites with 467 multi-allelic SNPs.  
 
