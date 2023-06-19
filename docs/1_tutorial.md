@@ -286,7 +286,14 @@ We are gonna just use this data for imputation. So there are two populations inv
 Now we create a new directory for our imputation:
 
 !!! terminal "code"
-
+    ```bash
+    #confirm the current working directory is ~/imputation_workshop` as imputations directory will be created inside the former
+    pwd
+    ```
+    ??? success "Output"
+        ```bash
+        /home/$USER/imputation_workshop
+        ```
     ```bash
     mkdir -p imputation
     cd imputation
