@@ -201,10 +201,12 @@ For imputation, no matter which software are you using, phasing is compulsory fo
 
 The data I downloaded already finished phasing that you can see in the dataset, all the genotypes are phased (eg: "0|1", not "0/1"). Besides phasing needs a lot of computation resources and a certain amount of time. Here since the data is already phased, it won't take too long.  
 
-```
-beagle gt=ref_filtered.vcf.gz chrom=13 out=ref_filtered_phased
-tabix -f ref_filtered_phased.vcf.gz
-```
+!!! terminal "code"
+
+    ```bash
+    beagle gt=ref_filtered.vcf.gz chrom=13 out=ref_filtered_phased
+    tabix -f ref_filtered_phased.vcf.gz
+    ```
 
 ```
 beagle gt=ref_nonfiltered.vcf.gz chrom=13 out=ref_nonfiltered_phased
