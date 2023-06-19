@@ -324,13 +324,15 @@ So we got four output here. and we are gonna pop them in R to have a look:
 
 The first step is to read in all our output files in R
 
-```
-setwd("~/imputation_workshop/imputation")
-filteredBG5 <- read.table("HD_to_seq_filtered_beagle5.r2")
-nonfilteredBG5 <- read.table("HD_to_seq_nonfiltered_beagle5.r2")
-filteredminimac3 <- read.table("HD_to_seq_filtered_minimac3.info", header=T)
-nonfilteredminimac3 <- read.table("HD_to_seq_nonfiltered_minimac3.info", header=T)
-```
+!!! r-project "code
+
+    ```r
+    setwd("~/imputation_workshop/imputation")
+    filteredBG5 <- read.table("HD_to_seq_filtered_beagle5.r2")
+    nonfilteredBG5 <- read.table("HD_to_seq_nonfiltered_beagle5.r2")
+    filteredminimac3 <- read.table("HD_to_seq_filtered_minimac3.info", header=T)
+    nonfilteredminimac3 <- read.table("HD_to_seq_nonfiltered_minimac3.info", header=T)
+    ```
 
 Then we need to extract all the positions. This step is a bit redundant for beagle outputs but really helpful for the minimac3 output. The function we are gonna use is `substr`, it tells R to just extract the string from the 4th digit to the 11th digit. 
  
