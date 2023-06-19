@@ -103,6 +103,7 @@ markdown_extensions:
       custom_checkbox: true
   - pymdownx.tilde
   - pymdownx.snippets
+  - pymdownx.pathconverter
 
 extra_javascript:
   - javascripts/mathjax.js
