@@ -1,6 +1,6 @@
 # Tutorial 
 
-!!! info "Aim"
+!!! circle-info "Aim"
 
     1. Go through the pipeline of phasing and imputing high-density genotype to sequence level
     2. Understand the importance of quality control 
