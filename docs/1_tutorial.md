@@ -140,12 +140,14 @@ There are a lot of parameters you may take into consideration in your dataset, s
 
 As we can see here, after removing the non-variants and singletons, the number of variants decreased to 85,928, 80,184 SNPs, 5767 indels, 67 others, 694 multiallelic sites with 467 multi-allelic SNPs.  
 
-```
-bcftools view -O z -o nosingleton_2alleles.vcf.gz --max-alleles 2 nosingleton.vcf.gz
-tabix -f nosingleton_2alleles.vcf.gz
-bcftools stats -s "-" nosingleton_2alleles.vcf.gz > step2.stats
-less step2.stats
-```
+!!! terminal "code"
+
+    ```bash
+    bcftools view -O z -o nosingleton_2alleles.vcf.gz --max-alleles 2 nosingleton.vcf.gz
+    tabix -f nosingleton_2alleles.vcf.gz
+    bcftools stats -s "-" nosingleton_2alleles.vcf.gz > step2.stats
+    less step2.stats
+    ```
 ![](https://github.com/GenomicsAotearoa/Imputation-workshop/blob/master/Tutorial/img/Screen%20Shot%202020-09-16%20at%2014.40.26.png?raw=true)
 
 As we can see here, after setting the maximum allele into 2, the multi-allelic variants should be gone. The total number of variants decreased to 85,234, 79,627 SNPs, 5543 indels and 64 others. In this tutorial, I am only gonna consider non-variant, singleton and multi-allelic variants since the majority of the imputation software can not handle them anyway. Other filtering processes can also be done using bcftools, you can just pop in the website and go to filtering sessions. 
@@ -154,36 +156,44 @@ As we can see here, after setting the maximum allele into 2, the multi-allelic v
 
 We are gonna just use this data for imputation. So there are two populations involved: reference population and study population. In reality you should have both datasets ready. In this tutorial, I decide to just use this one dataset. Treat the first 1000 samples as my reference, and the rest will be set as my study population. Using bcftools to extract the sample ID and basic awk function to generate two population ID files as follow:
 
-```
-bcftools query -l nonfilter_seq_5MB.vcf.gz > seq.ID
-awk 'NR>0&&NR<=1000' seq.ID > ref.ID
-awk 'NR>1000&&NR<=2000' seq.ID > study.ID
-```
+!!! terminal "code"
+
+    ```bash
+    bcftools query -l nonfilter_seq_5MB.vcf.gz > seq.ID
+    awk 'NR>0&&NR<=1000' seq.ID > ref.ID
+    awk 'NR>1000&&NR<=2000' seq.ID > study.ID
+    ```
 
 Now we create a new directory for our imputation:
 
-```
-mkdir -p imputation
-cd imputation
-```
+!!! terminal "code"
+
+    ```bash
+    mkdir -p imputation
+    cd imputation
+    ```
 
 bcftools is very handy of extracting the sample from the whole dataset via using -S. We will generate two files for our study samples: one from HD genotype as my study population. And another one from filtered sequence data for future validation. After extraction, we use function tabix to index both files.
 
-```
-bcftools view -O z -o study_hd.vcf.gz -S ~/imputation_workshop/study.ID ~/imputation_workshop/hd_5MB.vcf.gz
-tabix -f study_hd.vcf.gz
-bcftools view -O z -o study_filtered.vcf.gz -S ~/imputation_workshop/study.ID ~/imputation_workshop/nosingleton_2alleles.vcf.gz #for validation
-tabix -f study_filtered.vcf.gz
-```
+!!! terminal "code"
+
+    ```bash
+    bcftools view -O z -o study_hd.vcf.gz -S ~/imputation_workshop/study.ID ~/imputation_workshop/hd_5MB.vcf.gz
+    tabix -f study_hd.vcf.gz
+    bcftools view -O z -o study_filtered.vcf.gz -S ~/imputation_workshop/study.ID ~/imputation_workshop/nosingleton_2alleles.vcf.gz #for validation
+    tabix -f study_filtered.vcf.gz
+    ```
 
 Similarly, we will extract the samples for our reference samples. The same functions will be used here. We will generate two files for the reference samples, one is from the original unfiltered sequence, and another one from the filtered sequence. Again, we will use tabix to index these two files. 
 
-```
-bcftools view -O z -o ref_nonfiltered.vcf.gz -S ~/imputation_workshop/ref.ID ~/imputation_workshop/nonfilter_seq_5MB.vcf.gz
-tabix -f ref_nonfiltered.vcf.gz
-bcftools view -O z -o ref_filtered.vcf.gz -S ~/imputation_workshop/ref.ID ~/imputation_workshop/nosingleton_2alleles.vcf.gz
-tabix -f ref_filtered.vcf.gz
-```
+!!! terminal "code"
+
+    ```bash
+    bcftools view -O z -o ref_nonfiltered.vcf.gz -S ~/imputation_workshop/ref.ID ~/imputation_workshop/nonfilter_seq_5MB.vcf.gz
+    tabix -f ref_nonfiltered.vcf.gz
+    bcftools view -O z -o ref_filtered.vcf.gz -S ~/imputation_workshop/ref.ID ~/imputation_workshop/nosingleton_2alleles.vcf.gz
+    tabix -f ref_filtered.vcf.gz
+    ```
 
 ## 6. Phasing using Beagle 5 
 
