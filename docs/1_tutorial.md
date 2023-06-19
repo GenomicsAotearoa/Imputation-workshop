@@ -260,38 +260,48 @@ To compare two vcfs and have an idea of genotype concordance, there is a sub-fun
 
 In the previous session, we have four imputation output using both Beagle 5 and minimac3 to impute to filtered and unfiltered sequence reference. So four concordance file will be generated as below:
 
-```
-vcf-compare study_filtered.vcf.gz HD_to_seq_filtered_beagle5.vcf.gz > concordance_beagle5_filtered
-less concordance_beagle5_filtered
-```
+!!! terminal "code"
+
+    ```bash
+    vcf-compare study_filtered.vcf.gz HD_to_seq_filtered_beagle5.vcf.gz > concordance_beagle5_filtered
+    less concordance_beagle5_filtered
+    ```
 ![](https://github.com/GenomicsAotearoa/Imputation-workshop/blob/master/Tutorial/img/Screen%20Shot%202020-09-16%20at%2014.50.01.png?raw=true)
 
-```
-vcf-compare study_filtered.vcf.gz HD_to_seq_nonfiltered_beagle5.vcf.gz > concordance_beagle5_nonfiltered`
-less concordance_beagle5_nonfiltered
-```
+!!! terminal "code"
+
+    ```bash
+    vcf-compare study_filtered.vcf.gz HD_to_seq_nonfiltered_beagle5.vcf.gz > concordance_beagle5_nonfiltered`
+    less concordance_beagle5_nonfiltered
+    ```
 ![](https://github.com/GenomicsAotearoa/Imputation-workshop/blob/master/Tutorial/img/Screen%20Shot%202020-09-16%20at%2014.51.21.png?raw=true)
 
-```
-vcf-compare study_filtered.vcf.gz HD_to_seq_filtered_minimac3.dose.vcf.gz > concordance_minimac3_filtered
-less concordance_minimac3_filtered
-```
+!!! terminal "code"
+
+    ```bash
+    vcf-compare study_filtered.vcf.gz HD_to_seq_filtered_minimac3.dose.vcf.gz > concordance_minimac3_filtered
+    less concordance_minimac3_filtered
+    ```
 ![](https://github.com/GenomicsAotearoa/Imputation-workshop/blob/master/Tutorial/img/Screen%20Shot%202020-09-16%20at%2014.52.43.png?raw=true)
 
-```
-vcf-compare study_filtered.vcf.gz HD_to_seq_nonfiltered_minimac3.dose.vcf.gz > concordance_minimac3_nonfiltered
-less concordance_minimac3_nonfiltered
-```
+!!! terminal "code"
+
+    ```bash
+    vcf-compare study_filtered.vcf.gz HD_to_seq_nonfiltered_minimac3.dose.vcf.gz > concordance_minimac3_nonfiltered
+    less concordance_minimac3_nonfiltered
+    ```
 ![](https://github.com/GenomicsAotearoa/Imputation-workshop/blob/master/Tutorial/img/Screen%20Shot%202020-09-16%20at%2014.53.47.png?raw=true)
 
 ## 10. Evaluate the performance of imputation: allelic/dosage R-square
 
 To calculate the dosage R-square, beagle 5 does not provide a seperate file. You may need a bit code to extract the information:
 
-```
-bcftools query -f '%CHROM\t%POS\t%ID\t%REF\t%ALT\t%QUAL\t%FILTER\t%DR2\t%AF\t%IMP\n' HD_to_seq_filtered_beagle5.vcf.gz > HD_to_seq_filtered_beagle5.r2
-bcftools query -f '%CHROM\t%POS\t%ID\t%REF\t%ALT\t%QUAL\t%FILTER\t%DR2\t%AF\t%IMP\n' HD_to_seq_nonfiltered_beagle5.vcf.gz > HD_to_seq_nonfiltered_beagle5.r2
-```
+!!! terminal "code"
+
+    ```bash
+    bcftools query -f '%CHROM\t%POS\t%ID\t%REF\t%ALT\t%QUAL\t%FILTER\t%DR2\t%AF\t%IMP\n' HD_to_seq_filtered_beagle5.vcf.gz > HD_to_seq_filtered_beagle5.r2
+    bcftools query -f '%CHROM\t%POS\t%ID\t%REF\t%ALT\t%QUAL\t%FILTER\t%DR2\t%AF\t%IMP\n' HD_to_seq_nonfiltered_beagle5.vcf.gz > HD_to_seq_nonfiltered_beagle5.r2
+    ```
 
 The columns of the file we generated are chromosome, position, SNP name, reference allele, alternative allele, quality, filter, **dosage r-square,** allele frequency, whether it is imputed. It is a thoughtful enough file that provides us all the information, the only additional part we may need to do is calculate the minor allele frequency from allele frequency.
 
@@ -324,36 +334,44 @@ nonfilteredminimac3 <- read.table("HD_to_seq_nonfiltered_minimac3.info", header=
 
 Then we need to extract all the positions. This step is a bit redundant for beagle outputs but really helpful for the minimac3 output. The function we are gonna use is `substr`, it tells R to just extract the string from the 4th digit to the 11th digit. 
  
-```
-filteredBG5$Pos <- filteredBG5$V2
-nonfilteredBG5$Pos <- nonfilteredBG5$V2
-filteredminimac3$Pos <- substr(filteredminimac3$SNP, 4, 11)
-nonfilteredminimac3$Pos <- substr(nonfilteredminimac3$SNP, 4, 11)
-```
+!!! r-project "code"
+
+    ```r
+    filteredBG5$Pos <- filteredBG5$V2
+    nonfilteredBG5$Pos <- nonfilteredBG5$V2
+    filteredminimac3$Pos <- substr(filteredminimac3$SNP, 4, 11)
+    nonfilteredminimac3$Pos <- substr(nonfilteredminimac3$SNP, 4, 11)
+    ```
 The next step is to extract the R-square for beagle 5. Usually, it shouldn't be a problem, you get the number in that column directly. However, in this session, we used the unfiltered reference, which contains the multi-allelic positions. In this case, Beagle will give you multiple possible solutions for those multi-allelic positions. In this case, we just take the first solution to make things easier. Here you may see a warning message mentioned `NA` generated. Don't worry about that.  
 
-```
-filteredBG5$DR2_filtered_BG5 <- filteredBG5$V8
-nonfilteredBG5$DR2_nonfiltered_BG5 <- as.numeric(substr(nonfilteredBG5$V8, 1, 4))
-filteredminimac3$Rsq_filtered_minimac3 <- filteredminimac3$Rsq
-nonfilteredminimac3$Rsq_nonfiltered_minimac3 <- nonfilteredminimac3$Rsq
-```
+!!! r-project "code"
+
+    ```r
+    filteredBG5$DR2_filtered_BG5 <- filteredBG5$V8
+    nonfilteredBG5$DR2_nonfiltered_BG5 <- as.numeric(substr(nonfilteredBG5$V8, 1, 4))
+    filteredminimac3$Rsq_filtered_minimac3 <- filteredminimac3$Rsq
+    nonfilteredminimac3$Rsq_nonfiltered_minimac3 <- nonfilteredminimac3$Rsq
+    ```
 Now let's merge both the output files from Beagle and Minimac3, then final merge them into a file called `finalmerge`
 
-```r
-mergedBeagle <- merge(filteredBG5, nonfilteredBG5, by.x="Pos", by.y="Pos", all=FALSE)
-mergedMinimac3 <- merge(filteredminimac3, nonfilteredminimac3, by.x="Pos", by.y="Pos", all=FALSE)
-finalmerge <- merge(mergedBeagle, mergedMinimac3, by.x="Pos", by.y="Pos", all=FALSE)
-```
+!!! r-project "code"
+
+    ```r
+    mergedBeagle <- merge(filteredBG5, nonfilteredBG5, by.x="Pos", by.y="Pos", all=FALSE)
+    mergedMinimac3 <- merge(filteredminimac3, nonfilteredminimac3, by.x="Pos", by.y="Pos", all=FALSE)
+    finalmerge <- merge(mergedBeagle, mergedMinimac3, by.x="Pos", by.y="Pos", all=FALSE)
+    ```
 
 Let's have a look at the summary
 
-```r
-summary(finalmerge$DR2_filtered_BG5)
-summary(finalmerge$DR2_nonfiltered_BG5)
-summary(finalmerge$Rsq_filtered_minimac3)
-summary(finalmerge$Rsq_nonfiltered_minimac3)
-```
+!!! r-project "code"
+
+    ```r
+    summary(finalmerge$DR2_filtered_BG5)
+    summary(finalmerge$DR2_nonfiltered_BG5)
+    summary(finalmerge$Rsq_filtered_minimac3)
+    summary(finalmerge$Rsq_nonfiltered_minimac3)
+    ```
 
 In both cases of beagle 5 and minimac3, using unfiltered reference gave us poorer performance compared to the filtered ones. Minimac3 gave slightly higher allelic square compare to beagle5. It is not always the case since we are only using 5MB here. And also the performance depends on a lot of parameters. As I mentioned, Beagle is fast but computationally demanding. Minimac 3 is slower but very efficient. There are of course other software for you to choose. Which software to use, what parameters for QC, questions such as those I may not have an answer, you have to figure it out by doing experiments. 
 
@@ -361,41 +379,51 @@ As I also mentioned allelic/dosage-r square is a good parameter for evaluating t
 
 ![](https://github.com/GenomicsAotearoa/Imputation-workshop/blob/master/Tutorial/img/Screen%20Shot%202020-09-16%20at%2015.13.24.png?raw=true)
 
-```
-plot(finalmerge$MAF.x,finalmerge$DR2_filtered_BG5, pch=4)
-```
+!!! r-project "code"
+
+    ```r
+    plot(finalmerge$MAF.x,finalmerge$DR2_filtered_BG5, pch=4)
+    ```
 
 ![](https://github.com/GenomicsAotearoa/Imputation-workshop/blob/master/Tutorial/img/image003.png?raw=true)
 
-```
-plot(finalmerge$MAF.x,finalmerge$Rsq_filtered_minimac3, pch=4)
-```
+!!! r-project "code"
 
+    ```r
+    plot(finalmerge$MAF.x,finalmerge$Rsq_filtered_minimac3, pch=4)
+    ```
+    
 ![](https://github.com/GenomicsAotearoa/Imputation-workshop/blob/master/Tutorial/img/image002.png?raw=true)
 
 And also, we can also have a look at the correlation between the allelic/dosage-r square from beagle 5 and minimac3. 
 
-```
-plot(finalmerge$DR2_filtered_BG5,finalmerge$Rsq_filtered_minimac3, pch=4)
-```
+!!! r-project "code"
+
+    ```r
+    plot(finalmerge$DR2_filtered_BG5,finalmerge$Rsq_filtered_minimac3, pch=4)
+    ```
 
 ![](https://github.com/GenomicsAotearoa/Imputation-workshop/blob/master/Tutorial/img/image001.png?raw=true)
 
 Now let's have a look at the poorly imputed regions, the simple way will be just use the position as X-axis and accuracy as Y-axis. The command will be just 
  
-```
-plot(finalmerge$Pos,finalmerge$DR2_filtered_BG5)
-plot(finalmerge$Pos,finalmerge$DR2_nonfiltered_BG5)
-plot(finalmerge$Pos,finalmerge$Rsq_filtered_minimac3)
-plot(finalmerge$Pos,finalmerge$Rsq_nonfiltered_minimac3)
-```
+!!! r-project "code"
+
+    ```r
+    plot(finalmerge$Pos,finalmerge$DR2_filtered_BG5)
+    plot(finalmerge$Pos,finalmerge$DR2_nonfiltered_BG5)
+    plot(finalmerge$Pos,finalmerge$Rsq_filtered_minimac3)
+    plot(finalmerge$Pos,finalmerge$Rsq_nonfiltered_minimac3)
+    ```
 
 Since we got too many positions on this region, it will be easier to use a bin plot other than just scatter plots. You don't need to run this part for yourself.
 
-```
-library(ggplot2)
-ggplot(finalmerge,aes(x=Pos,y=DR2_filtered_BG5)) + stat_binhex()
-ggplot(finalmerge,aes(x=Pos,y=DR2_nonfiltered_BG5)) + stat_binhex()
-ggplot(finalmerge,aes(x=Pos,y=Rsq_filtered_minimac3)) + stat_binhex()
-ggplot(finalmerge,aes(x=Pos,y=Rsq_nonfiltered_minimac3)) + stat_binhex() 
-```
+!!! r-project "code"
+
+    ```r
+    library(ggplot2)
+    ggplot(finalmerge,aes(x=Pos,y=DR2_filtered_BG5)) + stat_binhex()
+    ggplot(finalmerge,aes(x=Pos,y=DR2_nonfiltered_BG5)) + stat_binhex()
+    ggplot(finalmerge,aes(x=Pos,y=Rsq_filtered_minimac3)) + stat_binhex()
+    ggplot(finalmerge,aes(x=Pos,y=Rsq_nonfiltered_minimac3)) + stat_binhex() 
+    ```
