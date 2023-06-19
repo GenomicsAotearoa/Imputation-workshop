@@ -7,21 +7,25 @@
     3. Know how to evaluate the imputation performance
 
 # Important notes
-1. All the parameter settings are suggestive. A different population may get absolutely different results using the same setting.
-2. You can't avoid experiments to find optimal settings for your own population before you started your whole genome sequence imputation.  
-3. Beagle 5.1 and Minimac3 are shown as examples in this tutorial. You can test on other software based on your need. 
 
-# Tools we need
-BCFtools: basic bioinformatics software, in this tutorial, we use it for creating subsets and quality control. the current version is  1.12-14-g9ca9893+ and the version we are using today is 1.9-GCC-7.4.0. ([http://samtools.github.io/bcftools/bcftools.html](http://samtools.github.io/bcftools/bcftools.html))
+!!! quote ""
 
-VCFtools: basic bioinformatics software, in this tutorial, we use it for comparing two vcf files and evaluate the concordance rate. The current version is /0.1.15-GCC-9.2.0-Perl-5.30.1 ([https://vcftools.github.io/index.html](https://vcftools.github.io/index.html))
+    1. All the parameter settings are suggestive. A different population may get absolutely different results using the same setting.
+    2. You can't avoid experiments to find optimal settings for your own population before you started your whole genome sequence imputation.  
+    3. Beagle 5.1 and Minimac3 are shown as examples in this tutorial. You can test on other software based on your need. 
 
-R: basic statistics software
+!!! screwdriver-wrench "Tools we need"
 
-Beagle: software for phasing and imputation. The current version is beagle 5.2 (version: 28Jun21.220). In this workshop, we are going to use version 5.1-18May20. ([https://faculty.washington.edu/browning/beagle/beagle.html](https://faculty.washington.edu/browning/beagle/beagle.html)) The performance of different versions of beagle can be found here: https://www.g3journal.org/content/10/1/177
-
-Minimac3: software for imputation ([https://genome.sph.umich.edu/wiki/Minimac3](https://genome.sph.umich.edu/wiki/Minimac3))
-
+    BCFtools: basic bioinformatics software, in this tutorial, we use it for creating subsets and quality control. the current version is  1.12-14-g9ca9893+ and the version we are using today is 1.9-GCC-7.4.0. ([http://samtools.github.io/bcftools/bcftools.html](http://samtools.github.io/bcftools/bcftools.html))
+    
+    VCFtools: basic bioinformatics software, in this tutorial, we use it for comparing two vcf files and evaluate the concordance rate. The current version is /0.1.15-GCC-9.2.0-Perl-5.30.1 ([https://vcftools.github.io/index.html](https://vcftools.github.io/index.html))
+    
+    R: basic statistics software
+    
+    Beagle: software for phasing and imputation. The current version is beagle 5.2 (version: 28Jun21.220). In this workshop, we are going to use version 5.1-18May20. ([https://faculty.washington.edu/browning/beagle/beagle.html](https://faculty.washington.edu/browning/beagle/beagle.html)) The performance of different versions of beagle can be found here: https://www.g3journal.org/content/10/1/177
+    
+    Minimac3: software for imputation ([https://genome.sph.umich.edu/wiki/Minimac3](https://genome.sph.umich.edu/wiki/Minimac3))
+    
 # Input files
 In this tutorial, we used 5MB segment (30-35MB) of chr13 from the 1000 Genome phase 3, which is publicly available and can be downloaded from https://mathgen.stats.ox.ac.uk/impute/impute_v2.html
 
