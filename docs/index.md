@@ -10,6 +10,6 @@
        - Quality control and preparation of genetic data for imputation 
        - Evaluating the imputation performance using different parameters
  
-## Prerequisites:
+!!! stethoscope "Prerequisites:"
 
-To get the most out of this workshop, it is encouraged that attendees know about basic genetics and genomics and have familiarity with bash and R.
+    To get the most out of this workshop, it is encouraged that attendees know about basic genetics and genomics and have familiarity with bash and R.

@@ -443,11 +443,11 @@
   }
   .md-typeset .admonition.stethoscope,
   .md-typeset details.stethoscope {
-    border-color: rgb(226, 74, 213);
+    border-color: rgb(10, 140, 216);
   }
   .md-typeset .stethoscope > .admonition-title,
   .md-typeset .stethoscope > summary {
-    background-color: rgba(77, 24, 61, 0.151);
+    background-color: rgba(58, 210, 236, 0.699);
   }
   .md-typeset .stethoscope > .admonition-title::before,
   .md-typeset .stethoscope > summary::before {
