@@ -29,7 +29,7 @@
 
     In this tutorial, we used 5MB segment (30-35MB) of chr13 from the 1000 Genome phase 3, which is publicly available and can be downloaded from https://mathgen.stats.ox.ac.uk/impute/impute_v2.html
     
-# Procedures
+## Procedures
 
 
 ## 1. Load the modules that are required on NeSI
