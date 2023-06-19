@@ -6,9 +6,8 @@
     2. Understand the importance of quality control 
     3. Know how to evaluate the imputation performance
 
-# Important notes
 
-!!! quote ""
+!!! note  "Import Notes"
 
     1. All the parameter settings are suggestive. A different population may get absolutely different results using the same setting.
     2. You can't avoid experiments to find optimal settings for your own population before you started your whole genome sequence imputation.  
