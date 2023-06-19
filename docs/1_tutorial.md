@@ -312,9 +312,11 @@ head HD_to_seq_filtered_beagle5.r2
 
 minimac3 generate an info file after it finishes imputing. It is pretty thoughtful that it provides us minor allele frequency directly. The troubling part is that we have to extract the position from the SNP column for future comparison. 
 
-```
-head HD_to_seq_filtered_minimac3.info
-```
+!!! terminal "code"
+
+    ```bash
+    head HD_to_seq_filtered_minimac3.info
+    ```
 
 ![](https://github.com/GenomicsAotearoa/Imputation-workshop/blob/master/Tutorial/img/Screen%20Shot%202020-09-16%20at%2015.02.07.png?raw=true)
 
@@ -324,7 +326,7 @@ So we got four output here. and we are gonna pop them in R to have a look:
 
 The first step is to read in all our output files in R
 
-!!! r-project "code
+!!! r-project "code"
 
     ```r
     setwd("~/imputation_workshop/imputation")
