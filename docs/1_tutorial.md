@@ -207,11 +207,12 @@ The data I downloaded already finished phasing that you can see in the dataset, 
     beagle gt=ref_filtered.vcf.gz chrom=13 out=ref_filtered_phased
     tabix -f ref_filtered_phased.vcf.gz
     ```
+!!! terminal "code"
 
-```
-beagle gt=ref_nonfiltered.vcf.gz chrom=13 out=ref_nonfiltered_phased
-tabix -f ref_nonfiltered_phased.vcf.gz
-```
+    ```bash
+    beagle gt=ref_nonfiltered.vcf.gz chrom=13 out=ref_nonfiltered_phased
+    tabix -f ref_nonfiltered_phased.vcf.gz
+    ```
 
 ## 7. Imputation using Beagle 5
 
@@ -219,31 +220,37 @@ In this tutorial, I will show you the imputation using two software: Beagle 5 an
 
 Beagle has been evolved from version 3.0 to the current 5.1 version. It becomes much faster and simpler. And be able to handle large datasets. In the meantime, the parameters for running the software have been reduced a lot. There are several important parameters that can influence imputation performance such as effective population size (Ne), window size, etc. Check the following paper: Improving Imputation Quality in BEAGLE for Crop and Livestock Data [https://www.g3journal.org/content/10/1/177](https://www.g3journal.org/content/10/1/177)
 
-```
-beagle gt=study_hd.vcf.gz ref=ref_filtered_phased.vcf.gz chrom=13 impute=true gp=true out=HD_to_seq_filtered_beagle5
-tabix -f HD_to_seq_filtered_beagle5.vcf.gz
-```
+!!! terminal "code"
 
-```
-beagle gt=study_hd.vcf.gz ref=ref_nonfiltered_phased.vcf.gz chrom=13 impute=true gp=true out=HD_to_seq_nonfiltered_beagle5
-tabix -f HD_to_seq_nonfiltered_beagle5.vcf.gz
-```
+    ```bash
+    beagle gt=study_hd.vcf.gz ref=ref_filtered_phased.vcf.gz chrom=13 impute=true gp=true out=HD_to_seq_filtered_beagle5
+    tabix -f HD_to_seq_filtered_beagle5.vcf.gz
+    ```
+!!! terminal "code"
+
+    ```bash
+    beagle gt=study_hd.vcf.gz ref=ref_nonfiltered_phased.vcf.gz chrom=13 impute=true gp=true out=HD_to_seq_nonfiltered_beagle5
+    tabix -f HD_to_seq_nonfiltered_beagle5.vcf.gz
+    ```
 
 ## 8. Imputation using minimac3
 
 The imputation process for using minimac3 is rather similar. It is more efficient than Beagle 5 but slightly slower. It takes ~10 mins to impute to filtered sequence reference and ~15 mins to impute to unfiltered sequence reference. I have already done the process, so you can just copy the outputs from the project folder to the current imputation folder. 
 
-```
-#Minimac3 --refHaps ref_filtered_phased.vcf.gz --haps study_hd.vcf.gz --prefix HD_to_seq_filtered_minimac3
-#tabix -f HD_to_seq_filtered_minimac3.dose.vcf.gz
-#Minimac3 --refHaps ref_nonfiltered_phased.vcf.gz --haps study_hd.vcf.gz --prefix HD_to_seq_nonfiltered_minimac3
-#tabix -f HD_to_seq_nonfiltered_minimac3.dose.vcf.gz
-```
+!!! terminal "code"
 
-```
-cp $maindir/HD_to_seq_filtered_minimac3.* ~/imputation_workshop/imputation
-cp $maindir/HD_to_seq_nonfiltered_minimac3.* ~/imputation_workshop/imputation
-```
+    ```bash
+    #Minimac3 --refHaps ref_filtered_phased.vcf.gz --haps study_hd.vcf.gz --prefix HD_to_seq_filtered_minimac3
+    #tabix -f HD_to_seq_filtered_minimac3.dose.vcf.gz
+    #Minimac3 --refHaps ref_nonfiltered_phased.vcf.gz --haps study_hd.vcf.gz --prefix HD_to_seq_nonfiltered_minimac3
+    #tabix -f HD_to_seq_nonfiltered_minimac3.dose.vcf.gz
+    ```
+!!! terminal "code"
+
+    ```bash
+    cp $maindir/HD_to_seq_filtered_minimac3.* ~/imputation_workshop/imputation
+    cp $maindir/HD_to_seq_nonfiltered_minimac3.* ~/imputation_workshop/imputation
+    ```
 
 ## 9. Calculate the genotype concordance using vcf-compare (from VCFtools)
 
