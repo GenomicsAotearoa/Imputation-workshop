@@ -208,9 +208,66 @@ As we can see here, after removing the non-variants and singletons, the number o
     bcftools view -O z -o nosingleton_2alleles.vcf.gz --max-alleles 2 nosingleton.vcf.gz
     tabix -f nosingleton_2alleles.vcf.gz
     bcftools stats -s "-" nosingleton_2alleles.vcf.gz > step2.stats
+    ```
+!!! terminal "code"
+    ```bash
     less step2.stats
     ```
-![](https://github.com/GenomicsAotearoa/Imputation-workshop/blob/master/Tutorial/img/Screen%20Shot%202020-09-16%20at%2014.40.26.png?raw=true)
+    ??? success "Output"
+
+        ```bash
+        # This file was produced by bcftools stats (1.9+htslib-1.9) and can be plotted using plot-vcfstats.
+        # The command line was: bcftools stats  -s - nosingleton_2alleles.vcf.gz
+        #
+        # Definition of sets:
+        # ID    [2]id   [3]tab-separated file names
+        ID      0       nosingleton_2alleles.vcf.gz
+        # SN, Summary numbers:
+        #   number of records   .. number of data rows in the VCF
+        #   number of no-ALTs   .. reference-only sites, ALT is either "." or identical to REF
+        #   number of SNPs      .. number of rows with a SNP
+        #   number of MNPs      .. number of rows with a MNP, such as CC>TT
+        #   number of indels    .. number of rows with an indel
+        #   number of others    .. number of rows with other type, for example a symbolic allele or
+        #                          a complex substitution, such as ACT>TCGA
+        #   number of multiallelic sites     .. number of rows with multiple alternate alleles
+        #   number of multiallelic SNP sites .. number of rows with multiple alternate alleles, all SNPs
+        # 
+        #   Note that rows containing multiple types will be counted multiple times, in each
+        #   counter. For example, a row with a SNP and an indel increments both the SNP and
+        #   the indel counter.
+        # 
+        # SN    [2]id   [3]key  [4]value
+        SN      0       number of samples:      2504
+        SN      0       number of records:      85234
+        SN      0       number of no-ALTs:      0
+        SN      0       number of SNPs: 79627
+        SN      0       number of MNPs: 0
+        SN      0       number of indels:       5543
+        SN      0       number of others:       64
+        SN      0       number of multiallelic sites:   0
+        SN      0       number of multiallelic SNP sites:       0
+        # TSTV, transitions/transversions:
+        # TSTV  [2]id   [3]ts   [4]tv   [5]ts/tv        [6]ts (1st ALT) [7]tv (1st ALT) [8]ts/tv (1st ALT)
+        TSTV    0       55586   24041   2.31    55586   24041   2.31
+        # SiS, Singleton stats:
+        # SiS   [2]id   [3]allele count [4]number of SNPs       [5]number of transitions        [6]number of transversions      [7]number of indels     [8]repeat-consistent    [9]repeat-inconsistent  [10]not applicable
+        SiS     0       1       0       0       0       0       0       0       0
+        # AF, Stats by non-reference allele frequency:
+        # AF    [2]id   [3]allele frequency     [4]number of SNPs       [5]number of transitions        [6]number of transversions      [7]number of indels     [8]repeat-consistent    [9]repeat-inconsistent  [10]not applicable
+        AF      0       0.000000        15598   11131   4467    29      0       0       29
+        AF      0       0.000399        11775   8248    3527    857     0       0       857
+        AF      0       0.000799        6163    4293    1870    433     0       0       433
+        AF      0       0.001198        4104    2833    1271    292     0       0       292
+        AF      0       0.001597        2806    1928    878     202     0       0       202
+        AF      0       0.001997        2344    1651    693     166     0       0       166
+        AF      0       0.002396        1830    1286    544     118     0       0       118
+        AF      0       0.002796        1567    1111    456     106     0       0       106
+        AF      0       0.003195        1358    951     407     106     0       0       106
+        AF      0       0.003594        1144    775     369     85      0       0       85
+        AF      0       0.003994        972     682     290     64      0       0       64
+        AF      0       0.004393        914     629     285     71      0       0       71
+        ```
 
 As we can see here, after setting the maximum allele into 2, the multi-allelic variants should be gone. The total number of variants decreased to 85,234, 79,627 SNPs, 5543 indels and 64 others. In this tutorial, I am only gonna consider non-variant, singleton and multi-allelic variants since the majority of the imputation software can not handle them anyway. Other filtering processes can also be done using bcftools, you can just pop in the website and go to filtering sessions. 
 
