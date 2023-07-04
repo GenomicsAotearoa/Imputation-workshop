@@ -430,7 +430,7 @@ In the previous session, we have four imputation output using both Beagle 5 and 
 !!! terminal "code"
 
     ```bash
-    vcf-compare study_filtered.vcf.gz HD_to_seq_nonfiltered_beagle5.vcf.gz > concordance_beagle5_nonfiltered`
+    vcf-compare study_filtered.vcf.gz HD_to_seq_nonfiltered_beagle5.vcf.gz > concordance_beagle5_nonfiltered
     less concordance_beagle5_nonfiltered
     ```
 ![](https://github.com/GenomicsAotearoa/Imputation-workshop/blob/master/Tutorial/img/Screen%20Shot%202020-09-16%20at%2014.51.21.png?raw=true)
