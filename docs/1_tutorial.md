@@ -407,8 +407,8 @@ The imputation process for using minimac3 is rather similar. It is more efficien
 !!! terminal "code"
 
     ```bash
-    cp $maindir/HD_to_seq_filtered_minimac3.* ~/imputation_workshop/imputation
-    cp $maindir/HD_to_seq_nonfiltered_minimac3.* ~/imputation_workshop/imputation
+    cp $maindir/imputation/HD_to_seq_filtered_minimac3.* ~/imputation_workshop/imputation
+    cp $maindir/imputation/HD_to_seq_nonfiltered_minimac3.* ~/imputation_workshop/imputation
     ```
 
 ## 9. Calculate the genotype concordance using vcf-compare (from VCFtools)
