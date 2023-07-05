@@ -15,13 +15,13 @@
 
 !!! screwdriver-wrench "Tools we need"
 
-    BCFtools: basic bioinformatics software, in this tutorial, we use it for creating subsets and quality control. the current version is  1.12-14-g9ca9893+ and the version we are using today is 1.9-GCC-7.4.0. ([http://samtools.github.io/bcftools/bcftools.html](http://samtools.github.io/bcftools/bcftools.html))
+    BCFtools: basic bioinformatics software, in this tutorial, we use it for creating subsets and quality control. the current version is 1.12-14-g9ca9893+ and the version we are using today is 1.9-GCC-7.4.0. ([http://samtools.github.io/bcftools/bcftools.html](http://samtools.github.io/bcftools/bcftools.html))
     
     VCFtools: basic bioinformatics software, in this tutorial, we use it for comparing two vcf files and evaluate the concordance rate. The current version is /0.1.15-GCC-9.2.0-Perl-5.30.1 ([https://vcftools.github.io/index.html](https://vcftools.github.io/index.html))
     
     R: basic statistics software
     
-    Beagle: software for phasing and imputation. The current version is beagle 5.2 (version: 28Jun21.220). In this workshop, we are going to use version 5.1-18May20. ([https://faculty.washington.edu/browning/beagle/beagle.html](https://faculty.washington.edu/browning/beagle/beagle.html)) The performance of different versions of beagle can be found here: https://www.g3journal.org/content/10/1/177
+    Beagle: software for phasing and imputation. The current version is beagle 5.4 (version: 22Jul22.46e). ([https://faculty.washington.edu/browning/beagle/beagle.html](https://faculty.washington.edu/browning/beagle/beagle.html)) The performance of different versions of beagle can be found here: https://www.g3journal.org/content/10/1/177
     
     Minimac3: software for imputation ([https://genome.sph.umich.edu/wiki/Minimac3](https://genome.sph.umich.edu/wiki/Minimac3))
     
@@ -43,7 +43,7 @@ Open a terminal and at the prompt:
     module load BCFtools/1.16-GCC-11.3.0
     module load VCFtools/0.1.15-GCC-9.2.0-Perl-5.30.1
     module load R/4.2.1-gimkl-2022a
-    module load Beagle/5.1-18May20.d20 
+    module load Beagle/5.4-22Jul22.46e 
     module load Minimac3/2.0.1
     ```
 
