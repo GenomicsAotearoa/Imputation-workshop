@@ -40,11 +40,11 @@ Open a terminal and at the prompt:
 !!! terminal "code"
 
     ``` bash
-module load BCFtools/1.16-GCC-11.3.0
-module load VCFtools/0.1.15-GCC-9.2.0-Perl-5.30.1
-module load R/4.2.1-gimkl-2022a
-module load Beagle/5.1-18May20.d20 
-module load Minimac3/2.0.1
+    module load BCFtools/1.16-GCC-11.3.0
+    module load VCFtools/0.1.15-GCC-9.2.0-Perl-5.30.1
+    module load R/4.2.1-gimkl-2022a
+    module load Beagle/5.1-18May20.d20 
+    module load Minimac3/2.0.1
     ```
 
 ## 2. Copy the files into the home directory
