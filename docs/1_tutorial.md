@@ -24,6 +24,7 @@
     Beagle: software for phasing and imputation. The current version is beagle 5.4 (version: 22Jul22.46e). ([https://faculty.washington.edu/browning/beagle/beagle.html](https://faculty.washington.edu/browning/beagle/beagle.html)) The performance of different versions of beagle can be found here: https://www.g3journal.org/content/10/1/177
     
     Minimac3: software for imputation ([https://genome.sph.umich.edu/wiki/Minimac3](https://genome.sph.umich.edu/wiki/Minimac3))
+    Minimac has been updated to Minimac4 ([https://github.com/statgen/Minimac4](https://github.com/statgen/Minimac4)) but usage requires a file format change that is done with Minimac3
     
 !!! file-code "Input files"
 
@@ -54,7 +55,7 @@ Define two directories: workshop directory and home directory. In this workshop,
 !!! terminal "code"
     
     ```bash
-    maindir=/nesi/project/nesi02659/imputation2023
+    maindir=/nesi/project/nesi02659/imputation2021
     cd ~
     ```
 !!! terminal "code"
