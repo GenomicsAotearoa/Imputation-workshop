@@ -15,11 +15,11 @@
 
 !!! screwdriver-wrench "Tools we need"
 
-    BCFtools: basic bioinformatics software, in this tutorial, we use it for creating subsets and quality control. the current version is 1.12-14-g9ca9893+ and the version we are using today is 1.16-GCC-11.3.0. ([http://samtools.github.io/bcftools/bcftools.html](http://samtools.github.io/bcftools/bcftools.html))
+    BCFtools: basic bioinformatics software, in this tutorial, we use it for creating subsets and quality control. The latest version is 1.17 but we will be using 1.16. ([http://samtools.github.io/bcftools/bcftools.html](http://samtools.github.io/bcftools/bcftools.html))
     
-    VCFtools: basic bioinformatics software, in this tutorial, we use it for comparing two vcf files and evaluate the concordance rate. The current version is /0.1.15-GCC-9.2.0-Perl-5.30.1 ([https://vcftools.github.io/index.html](https://vcftools.github.io/index.html))
+    VCFtools: basic bioinformatics software, in this tutorial, we use it for comparing two vcf files and evaluate the concordance rate. The current version on NeSI is 0.1.15 ([https://vcftools.github.io/index.html](https://vcftools.github.io/index.html))
     
-    R: basic statistics software
+    R: basic statistics and plotting software
     
     Beagle: software for phasing and imputation. The current version is beagle 5.4 (version: 22Jul22.46e). ([https://faculty.washington.edu/browning/beagle/beagle.html](https://faculty.washington.edu/browning/beagle/beagle.html)) The performance of different versions of beagle can be found here: https://www.g3journal.org/content/10/1/177
     
