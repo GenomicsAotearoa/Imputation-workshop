@@ -11,19 +11,20 @@
 
     1. All the parameter settings are suggestive. A different population may get absolutely different results using the same setting.
     2. You can't avoid experiments to find optimal settings for your own population before you started your whole genome sequence imputation.  
-    3. Beagle 5.1 and Minimac3 are shown as examples in this tutorial. You can test on other software based on your need. 
+    3. Beagle 5.4 and Minimac3 are shown as examples in this tutorial. You can test on other software based on your need. 
 
 !!! screwdriver-wrench "Tools we need"
 
-    BCFtools: basic bioinformatics software, in this tutorial, we use it for creating subsets and quality control. the current version is  1.12-14-g9ca9893+ and the version we are using today is 1.9-GCC-7.4.0. ([http://samtools.github.io/bcftools/bcftools.html](http://samtools.github.io/bcftools/bcftools.html))
+    BCFtools: basic bioinformatics software, in this tutorial, we use it for creating subsets and quality control. The latest version is 1.17 but we will be using 1.16. ([http://samtools.github.io/bcftools/bcftools.html](http://samtools.github.io/bcftools/bcftools.html))
     
-    VCFtools: basic bioinformatics software, in this tutorial, we use it for comparing two vcf files and evaluate the concordance rate. The current version is /0.1.15-GCC-9.2.0-Perl-5.30.1 ([https://vcftools.github.io/index.html](https://vcftools.github.io/index.html))
+    VCFtools: basic bioinformatics software, in this tutorial, we use it for comparing two vcf files and evaluate the concordance rate. The current version on NeSI is 0.1.15 ([https://vcftools.github.io/index.html](https://vcftools.github.io/index.html))
     
-    R: basic statistics software
+    R: basic statistics and plotting software
     
-    Beagle: software for phasing and imputation. The current version is beagle 5.2 (version: 28Jun21.220). In this workshop, we are going to use version 5.1-18May20. ([https://faculty.washington.edu/browning/beagle/beagle.html](https://faculty.washington.edu/browning/beagle/beagle.html)) The performance of different versions of beagle can be found here: https://www.g3journal.org/content/10/1/177
+    Beagle: software for phasing and imputation. The current version is beagle 5.4 (version: 22Jul22.46e). ([https://faculty.washington.edu/browning/beagle/beagle.html](https://faculty.washington.edu/browning/beagle/beagle.html)) The performance of different versions of beagle can be found here: https://www.g3journal.org/content/10/1/177
     
     Minimac3: software for imputation ([https://genome.sph.umich.edu/wiki/Minimac3](https://genome.sph.umich.edu/wiki/Minimac3))
+    Minimac has been updated to Minimac4 ([https://github.com/statgen/Minimac4](https://github.com/statgen/Minimac4)) but usage requires a file format change that is done with Minimac3
     
 !!! file-code "Input files"
 
@@ -33,32 +34,29 @@
 
 
 ## 1. Load the modules that are required on NeSI
-To find modules that are already available on NeSI, use `module spider #module_name`
+* To find modules that are already available on NeSI `module spider <module_name>`
+* To load modules `module load <module_name>`    
 
-To load modules and start using, use `module load #module_name`
+Open a terminal and at the prompt:  
 
 !!! terminal "code"
 
     ``` bash
-    module load BCFtools/1.9-GCC-7.4.0
+    module purge
+    module load BCFtools/1.16-GCC-11.3.0
     module load VCFtools/0.1.15-GCC-9.2.0-Perl-5.30.1
-    module load R/4.0.1-gimkl-2020a
-    module load Beagle/5.4-22Jul22.46e
+    module load R/4.2.1-gimkl-2022a
+    module load Beagle/5.4-22Jul22.46e 
     module load Minimac3/2.0.1
     ```
 
 ## 2. Copy the files into the home directory
-Define two directories: workshop directory and home directory. In this workshop, the analysis will be conducted in the home directory
+Define two directories: workshop directory and home directory. In this workshop, the analysis will be conducted in your `/home/$USER/imputation_workshop/ diretcory. (`~` is the shortcut for you home directory)
 
 !!! terminal "code"
     
     ```bash
-    maindir=/nesi/project/nesi02659/imputation2021
     cd ~
-    ```
-!!! terminal "code"
-
-    ```bash
     mkdir -p imputation_workshop
     cd ~/imputation_workshop
     ```
@@ -68,11 +66,12 @@ The main input file (seqvcf) is extracted (from 30MB to 35MB) on chr13 from 1000
 !!! terminal "code"
 
     ```bash
+    maindir=/nesi/project/nesi02659/imputation2021
     seqvcf=$maindir/nonfilter_seq_5MB.vcf.gz
     hdvcf=$maindir/hd_5MB.vcf.gz
     ```
 
-Now what you need to do is to cp both genotype and sequence data to your own home directory. In addition, we have to software that we need to use which are not available on NeSI. Please also copy these two files in your own working directory.
+Now what you need to do is to `cp` (copy) both the genotype and sequence data to your own home directory.
 
 !!! terminal "code"
 
@@ -81,7 +80,7 @@ Now what you need to do is to cp both genotype and sequence data to your own hom
     cp $hdvcf ~/imputation_workshop
     ```
 
-The genotype and sequence files use "vcf.gz" format. We can not open it directly. To check how the genotype looks like, you need to use: zless -S. -S is to make the file well formatted. 
+The genotype and sequence files use "vcf.gz" format. We can not open these compressed files directly. To check how the genotypes look, you need to use: `zless -S`. -S is to make the file well formatted and stops each line from wrapping around. 
 
 !!! terminal "code"
 
@@ -292,14 +291,14 @@ Now we create a new directory for our imputation:
     ```
     ??? success "Output"
         ```bash
-        /home/$USER/imputation_workshop
+        /home/<userid>/imputation_workshop
         ```
     ```bash
     mkdir -p imputation
     cd imputation
     ```
 
-bcftools is very handy of extracting the sample from the whole dataset via using -S. We will generate two files for our study samples: one from HD genotype as my study population. And another one from filtered sequence data for future validation. After extraction, we use function tabix to index both files.
+bcftools is very handy for extracting the sample from the whole dataset via using -S. We will generate two files for our study samples: one from HD genotype as my study population. And another one from filtered sequence data for future validation. After extraction, we use the function `tabix` to index both files.
 
 !!! terminal "code"
 
@@ -377,7 +376,7 @@ The data I downloaded already finished phasing that you can see in the dataset, 
 
 In this tutorial, I will show you the imputation using two software: Beagle 5 and minimac3. Both software are very stable, reliable, easy-to-use, free, and pretty popular. Beagle 5 is computationally demanding but can give you accurate results very fast. Minimac is computationally efficient, but a bit slower. In addition, to prove that quality control is an important procedure, both filtered reference and unfiltered sequence reference will be used.
 
-Beagle has been evolved from version 3.0 to the current 5.1 version. It becomes much faster and simpler. And be able to handle large datasets. In the meantime, the parameters for running the software have been reduced a lot. There are several important parameters that can influence imputation performance such as effective population size (Ne), window size, etc. Check the following paper: Improving Imputation Quality in BEAGLE for Crop and Livestock Data [https://www.g3journal.org/content/10/1/177](https://www.g3journal.org/content/10/1/177)
+Beagle has been evolved from version 3.0 to the current 5.4 version. It has become much faster and simpler. And able to handle large datasets. In the meantime, the parameters for running the software have been reduced a lot. There are several important parameters that can influence imputation performance such as effective population size (Ne), window size, etc. Check the following paper: Improving Imputation Quality in BEAGLE for Crop and Livestock Data [https://www.g3journal.org/content/10/1/177](https://www.g3journal.org/content/10/1/177)
 
 !!! terminal "code"
 
@@ -413,11 +412,11 @@ The imputation process for using minimac3 is rather similar. It is more efficien
 
 ## 9. Calculate the genotype concordance using vcf-compare (from VCFtools)
 
-In this tutorial, I am gonna show you two parameters: genotype concordance and allelic/dosage R-square.
+In this tutorial, I am going show you two parameters: genotype concordance and allelic/dosage R-square.
 
-To compare two vcfs and have an idea of genotype concordance, there is a sub-function from vcftools: vcf-compare. so just pop in vcf-compare VCF1 VCF2 > output. You will have an output file.
+To compare two vcfs and have an idea of genotype concordance, there is a sub-function from vcftools: vcf-compare. so just pop in `vcf-compare VCF1 VCF2 > output`. You will have an output file.
 
-In the previous session, we have four imputation output using both Beagle 5 and minimac3 to impute to filtered and unfiltered sequence reference. So four concordance file will be generated as below:
+In the previous session, we have four imputation outputs using both Beagle 5 and minimac3, to impute to filtered and unfiltered sequence reference. So four concordance file will be generated as below:
 
 !!! terminal "code"
 
@@ -430,7 +429,7 @@ In the previous session, we have four imputation output using both Beagle 5 and 
 !!! terminal "code"
 
     ```bash
-    vcf-compare study_filtered.vcf.gz HD_to_seq_nonfiltered_beagle5.vcf.gz > concordance_beagle5_nonfiltered`
+    vcf-compare study_filtered.vcf.gz HD_to_seq_nonfiltered_beagle5.vcf.gz > concordance_beagle5_nonfiltered
     less concordance_beagle5_nonfiltered
     ```
 ![](https://github.com/GenomicsAotearoa/Imputation-workshop/blob/master/Tutorial/img/Screen%20Shot%202020-09-16%20at%2014.51.21.png?raw=true)
@@ -471,7 +470,7 @@ The columns of the file we generated are chromosome, position, SNP name, referen
     ```
 ![](https://github.com/GenomicsAotearoa/Imputation-workshop/blob/master/Tutorial/img/Screen%20Shot%202020-09-16%20at%2014.56.35.png?raw=true)
 
-minimac3 generate an info file after it finishes imputing. It is pretty thoughtful that it provides us minor allele frequency directly. The troubling part is that we have to extract the position from the SNP column for future comparison. 
+minimac3 generates an info file after it finishes imputing. It is pretty thoughtful that it provides us the minor allele frequency directly. The troubling part is that we have to extract the position from the SNP column for future comparison. 
 
 !!! terminal "code"
 
@@ -481,10 +480,12 @@ minimac3 generate an info file after it finishes imputing. It is pretty thoughtf
 
 ![](https://github.com/GenomicsAotearoa/Imputation-workshop/blob/master/Tutorial/img/Screen%20Shot%202020-09-16%20at%2015.02.07.png?raw=true)
 
-So we got four output here. and we are gonna pop them in R to have a look: 
+So we have four output here, and we are going pop them in R to have a look: 
 
 `R`
 
+We either use R at the terminal, or you can use the RStudio associated with Jupyter. When plotting at a terminal, you will need to write the output to a file and open the image from the Jupyter file directory on the left.
+ 
 The first step is to read in all our output files in R
 
 !!! r-project "code"
@@ -581,14 +582,14 @@ Now let's have a look at the poorly imputed regions, the simple way will be just
     plot(finalmerge$Pos,finalmerge$Rsq_nonfiltered_minimac3)
     ```
 
-Since we got too many positions on this region, it will be easier to use a bin plot other than just scatter plots. You don't need to run this part for yourself.
+Since we have large numbers of snps in this region, it will be easier to use a bin plot other than just scatter plots. `ggplot2` has a number of functions that are useful for visualising dense data, and we will use `geom_hex()`. You don't need to run this part for yourself.
 
 !!! r-project "code"
 
     ```r
     library(ggplot2)
-    ggplot(finalmerge,aes(x=Pos,y=DR2_filtered_BG5)) + stat_binhex()
-    ggplot(finalmerge,aes(x=Pos,y=DR2_nonfiltered_BG5)) + stat_binhex()
-    ggplot(finalmerge,aes(x=Pos,y=Rsq_filtered_minimac3)) + stat_binhex()
-    ggplot(finalmerge,aes(x=Pos,y=Rsq_nonfiltered_minimac3)) + stat_binhex() 
+    ggplot(finalmerge,aes(x=Pos,y=DR2_filtered_BG5)) + geom_hex()
+    ggplot(finalmerge,aes(x=Pos,y=DR2_nonfiltered_BG5)) + geom_hex()
+    ggplot(finalmerge,aes(x=Pos,y=Rsq_filtered_minimac3)) + geom_hex()
+    ggplot(finalmerge,aes(x=Pos,y=Rsq_nonfiltered_minimac3)) + geom_hex()
     ```
