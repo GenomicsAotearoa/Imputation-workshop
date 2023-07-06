@@ -593,3 +593,26 @@ Since we have large numbers of snps in this region, it will be easier to use a b
     ggplot(finalmerge,aes(x=Pos,y=Rsq_filtered_minimac3)) + geom_hex()
     ggplot(finalmerge,aes(x=Pos,y=Rsq_nonfiltered_minimac3)) + geom_hex()
     ```
+
+Additional Plots for interest looking at Imputation Accuracy
+!!! r-project "code"
+
+    ```r
+    ggplot(finalmerge,
+       aes(x=DR2_filtered_BG5,y=Rsq_filtered_minimac3, colour = Pos)) +
+      geom_jitter(alpha = 0.2, width = 0.01) +
+      labs(x = expression(paste("Beagle5 (",R^{2},")")),
+       y = expression(paste("Minimac3 (",R^{2},")")),
+       title = "Genotype Accuracy Comparison",
+       subtitle = expression(paste(R^{2}," between Minimac3 and Beagle5"))
+      ) +
+      theme_bw()
+
+    # Venn Diagram
+    #install.packages("ggvenn")
+    library("ggvenn")
+    
+    list_venn <- list(Beagle5 = which(finalmerge$DR2_filtered_BG5 >= 0.9),
+                  Minimac3 = which(finalmerge$Rsq_filtered_minimac3 >= 0.9))
+    ggvenn(list_venn, c("Beagle5", "Minimac3"))
+    ```
