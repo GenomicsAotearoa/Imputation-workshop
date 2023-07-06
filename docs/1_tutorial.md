@@ -582,14 +582,14 @@ Now let's have a look at the poorly imputed regions, the simple way will be just
     plot(finalmerge$Pos,finalmerge$Rsq_nonfiltered_minimac3)
     ```
 
-Since we have large numbers of snps in this region, it will be easier to use a bin plot other than just scatter plots. `ggplot2` has a number of functions that are useful for visualising dense data, and we will use `stat_binhex`. You don't need to run this part for yourself.
+Since we have large numbers of snps in this region, it will be easier to use a bin plot other than just scatter plots. `ggplot2` has a number of functions that are useful for visualising dense data, and we will use `geom_hex()`. You don't need to run this part for yourself.
 
 !!! r-project "code"
 
     ```r
     library(ggplot2)
-    ggplot(finalmerge,aes(x=Pos,y=DR2_filtered_BG5)) + stat_binhex()
-    ggplot(finalmerge,aes(x=Pos,y=DR2_nonfiltered_BG5)) + stat_binhex()
-    ggplot(finalmerge,aes(x=Pos,y=Rsq_filtered_minimac3)) + stat_binhex()
-    ggplot(finalmerge,aes(x=Pos,y=Rsq_nonfiltered_minimac3)) + stat_binhex() 
+    ggplot(finalmerge,aes(x=Pos,y=DR2_filtered_BG5)) + geom_hex()
+    ggplot(finalmerge,aes(x=Pos,y=DR2_nonfiltered_BG5)) + geom_hex()
+    ggplot(finalmerge,aes(x=Pos,y=Rsq_filtered_minimac3)) + geom_hex()
+    ggplot(finalmerge,aes(x=Pos,y=Rsq_nonfiltered_minimac3)) + geom_hex()
     ```
