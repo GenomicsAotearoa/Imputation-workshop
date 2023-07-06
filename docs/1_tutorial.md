@@ -56,12 +56,9 @@ Define two directories: workshop directory and home directory. In this workshop,
 !!! terminal "code"
     
     ```bash
-    maindir=/nesi/project/nesi02659/imputation2021
     cd ~
-    ```
-!!! terminal "code"
+    maindir=/nesi/project/nesi02659/imputation2021
 
-    ```bash
     mkdir -p imputation_workshop
     cd ~/imputation_workshop
     ```
