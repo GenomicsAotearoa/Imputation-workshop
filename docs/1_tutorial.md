@@ -42,6 +42,7 @@ Open a terminal and at the prompt:
 !!! terminal "code"
 
     ``` bash
+    module purge
     module load BCFtools/1.16-GCC-11.3.0
     module load VCFtools/0.1.15-GCC-9.2.0-Perl-5.30.1
     module load R/4.2.1-gimkl-2022a
