@@ -33,8 +33,8 @@
 
 
 ## 1. Load the modules that are required on NeSI
-*To find modules that are already available on NeSI `module spider <module_name>`
-*To load modules `module load <module_name>`    
+* To find modules that are already available on NeSI `module spider <module_name>`
+* To load modules `module load <module_name>`    
 
 Open a terminal and at the prompt:  
 
