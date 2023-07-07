@@ -51,7 +51,7 @@ Open a terminal and at the prompt:
     ```
 
 ## 2. Copy the files into the home directory
-Define two directories: workshop directory and home directory. In this workshop, the analysis will be conducted in your `/home/$USER/imputation_workshop/ diretcory. (`~` is the shortcut for you home directory)
+Define two directories: workshop directory and home directory. In this workshop, the analysis will be conducted in your `/home/$USER/imputation_workshop/` directory, (`~` is the shortcut for you home directory)
 
 !!! terminal "code"
     
